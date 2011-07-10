@@ -19,6 +19,9 @@
 		4A7223A913CA227900F99C33 /* GFImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223A813CA227900F99C33 /* GFImageCache.m */; };
 		4A7223AC13CA228900F99C33 /* GFRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223AB13CA228900F99C33 /* GFRenderView.m */; };
 		4A7223AE13CA238A00F99C33 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A7223AD13CA238A00F99C33 /* QuartzCore.framework */; };
+		4A7223B813CA369400F99C33 /* GFHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223B713CA369400F99C33 /* GFHelpers.m */; };
+		4A7223C213CA375D00F99C33 /* Test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7223C113CA375D00F99C33 /* Test.pdf */; };
+		4A7223C513CA3D6F00F99C33 /* GFRenderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +44,12 @@
 		4A7223AA13CA228900F99C33 /* GFRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFRenderView.h; sourceTree = "<group>"; };
 		4A7223AB13CA228900F99C33 /* GFRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderView.m; sourceTree = "<group>"; };
 		4A7223AD13CA238A00F99C33 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		4A7223B513CA293A00F99C33 /* GFRenderProtocols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFRenderProtocols.h; sourceTree = "<group>"; };
+		4A7223B613CA366F00F99C33 /* GFHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFHelpers.h; sourceTree = "<group>"; };
+		4A7223B713CA369400F99C33 /* GFHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFHelpers.m; sourceTree = "<group>"; };
+		4A7223C113CA375D00F99C33 /* Test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Test.pdf; sourceTree = "<group>"; };
+		4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFRenderViewController.h; sourceTree = "<group>"; };
+		4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,8 +107,14 @@
 				4A72238513CA0A5D00F99C33 /* Supporting Files */,
 				4A7223A713CA227900F99C33 /* GFImageCache.h */,
 				4A7223A813CA227900F99C33 /* GFImageCache.m */,
+				4A7223B513CA293A00F99C33 /* GFRenderProtocols.h */,
 				4A7223AA13CA228900F99C33 /* GFRenderView.h */,
 				4A7223AB13CA228900F99C33 /* GFRenderView.m */,
+				4A7223B613CA366F00F99C33 /* GFHelpers.h */,
+				4A7223B713CA369400F99C33 /* GFHelpers.m */,
+				4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */,
+				4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */,
+				4A7223C113CA375D00F99C33 /* Test.pdf */,
 			);
 			path = PDF;
 			sourceTree = "<group>";
@@ -165,6 +180,7 @@
 				4A72238913CA0A5D00F99C33 /* InfoPlist.strings in Resources */,
 				4A72239213CA0A5E00F99C33 /* MainWindow.xib in Resources */,
 				4A72239813CA0A5E00F99C33 /* PDFViewController.xib in Resources */,
+				4A7223C213CA375D00F99C33 /* Test.pdf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,6 +196,8 @@
 				4A72239513CA0A5E00F99C33 /* PDFViewController.m in Sources */,
 				4A7223A913CA227900F99C33 /* GFImageCache.m in Sources */,
 				4A7223AC13CA228900F99C33 /* GFRenderView.m in Sources */,
+				4A7223B813CA369400F99C33 /* GFHelpers.m in Sources */,
+				4A7223C513CA3D6F00F99C33 /* GFRenderViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,19 +10,19 @@
 #import "GFRenderView.h"
 
 @interface GFImageCache : NSObject {
- 
-  id<GFRenderDataSource> _dataSource;
-  
+   
   NSMutableDictionary *_cache;
   
+  CGSize pageSize_;
 }
 
-@property (nonatomic, assign) id<GFRenderDataSource> dataSource;
+@property (assign) CGSize pageSize;
 
 + (id)imageCache;
 
-- (CGImageRef)imageForPageIndex:(NSInteger)pageIndex;
+- (CGImageRef)itemForIndex:(NSInteger)index dataSource:(id<GFRenderDataSource>)dataSource;
 
-- (void)removeUnusedIndexes;
+- (void)minimizeItems:(NSInteger)currentIndex;
 
 @end
+

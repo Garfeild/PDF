@@ -7,9 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GFRenderView.h"
+#import "GFRenderViewController.h"
 
-@interface PDFViewController : UIViewController {
-    
+@interface PDFViewController : GFRenderViewController {
+  CGPDFDocumentRef _pdf;
+  
+  NSString *_fileName;
 }
+
+- (IBAction)nextPage:(id)sender;
+- (IBAction)prevPage:(id)sender;
 
 @end

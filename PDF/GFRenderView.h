@@ -8,25 +8,23 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import "GFRenderProtocols.h"
 
 @interface GFRenderView : UIView {
+
+  id<GFRenderDataSource> _dataSource;
+  id<GFRenderDelegate> _delegate;
   
   CALayer *_topLayer;
   
+  NSInteger currentItem_;
+  
 }
 
-@end
+@property (assign) id<GFRenderDataSource> dataSource;
+@property (assign) id<GFRenderDelegate> delegate;
+@property (assign) NSInteger currentItem;
 
-@protocol GFRenderDataSource <NSObject>
-
-@required
-- (NSInteger)numberOfItems:(GFRenderView)renderView;
-- (void)renderItemAtIndex:(NSInteger)index;
-
-@end
-
-@protocol GFRenderDelegate <NSObject>
-
-@optional
+- (void)reloadData;
 
 @end

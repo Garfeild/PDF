@@ -7,43 +7,57 @@
 //
 
 #import "PDFViewController.h"
+#import "GFHelpers.h"
+#import "GFImageCache.h"
 
 @implementation PDFViewController
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
-}
-
 #pragma mark - View lifecycle
 
-/*
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
+  NSString *path = [[NSBundle mainBundle] pathForResource:@"Test" ofType:@"pdf"];
+  NSURL *fileURL = [NSURL fileURLWithPath:path];
+  
+  _pdf = CGPDFDocumentCreateWithURL((CFURLRef)fileURL);
+  
+  _fileName = [[NSString alloc] initWithString:@"Test"];
+  
+  [super viewDidLoad];
 }
-*/
 
-- (void)viewDidUnload
+
+
+
+- (NSInteger)numberOfItems:(GFRenderView *)renderView
 {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
+  return CGPDFDocumentGetNumberOfPages(_pdf);
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)renderItemAtIndex:(NSInteger)index inContext:(CGContextRef)context
 {
-    // Return YES for supported orientations
-    return YES;
+  CGPDFPageRef page = CGPDFDocumentGetPage(_pdf, index + 1);
+	CGAffineTransform transform = aspectFit(CGPDFPageGetBoxRect(page, kCGPDFMediaBox),
+                                          CGContextGetClipBoundingBox(context));
+	CGContextConcatCTM(context, transform);
+	CGContextDrawPDFPage(context, page);
 }
 
+- (NSString*)fileName
+{
+  return _fileName;
+}
+
+
+
+- (IBAction)nextPage:(id)sender
+{
+  _renderView.currentItem = _renderView.currentItem+1;
+}
+
+- (IBAction)prevPage:(id)sender
+{
+  _renderView.currentItem = _renderView.currentItem-1;
+}
 @end
