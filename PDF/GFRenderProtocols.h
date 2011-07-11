@@ -22,5 +22,6 @@
 @protocol GFRenderDelegate <NSObject>
 
 @optional
+- (void)beginZoom;
 
 @end

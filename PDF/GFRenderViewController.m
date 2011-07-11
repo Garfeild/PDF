@@ -16,11 +16,13 @@
 
 - (void)initRender
 {
+  NSLog(@"Init render");
   _renderView = [[GFRenderView alloc] initWithFrame:CGRectZero];
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
+  NSLog(@"Init");
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     // Custom initialization
@@ -30,12 +32,13 @@
 }
 
 - (id)init {
+  NSLog(@"Blank init");
   return [self initWithNibName:nil bundle:nil];
 }
 
 - (void) awakeFromNib {
+  NSLog(@"AwakeFromNib");
 	[super awakeFromNib];
-	[self initRender];
 }
 
 - (void)dealloc
@@ -49,6 +52,7 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView
 {
+  NSLog(@"Load view");
   [super loadView];
   
   _renderView.frame = self.view.bounds;
@@ -88,6 +92,12 @@
 - (NSString*)fileName
 {
   return @"<Noname>";
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+  NSLog(@"Touch");
+  [_renderView touchesBegan:touches withEvent:event];
 }
 @end
 

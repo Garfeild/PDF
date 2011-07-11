@@ -14,6 +14,11 @@
   CGPDFDocumentRef _pdf;
   
   NSString *_fileName;
+  
+  UIToolbar *_toolBar;
+  
+  UIScrollView *_scrollView;
+
 }
 
 - (IBAction)nextPage:(id)sender;

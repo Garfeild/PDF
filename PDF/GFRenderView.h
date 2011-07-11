@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "GFRenderProtocols.h"
 
+
 @interface GFRenderView : UIView {
 
   id<GFRenderDataSource> _dataSource;
@@ -18,6 +19,9 @@
   CALayer *_topLayer;
   
   NSInteger currentItem_;
+  
+  CGRect  nextPageArea_,
+          prevPageArea_;
   
 }
 

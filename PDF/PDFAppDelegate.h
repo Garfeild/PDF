@@ -12,10 +12,10 @@
 
 @interface PDFAppDelegate : NSObject <UIApplicationDelegate> {
 
+  PDFViewController *viewController;
+  
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
-
-@property (nonatomic, retain) IBOutlet PDFViewController *viewController;
 
 @end
