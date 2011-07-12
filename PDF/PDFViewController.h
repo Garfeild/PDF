@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "GFRenderView.h"
+#import "GFRenderTiledView.h"
 #import "GFRenderViewController.h"
 
-@interface PDFViewController : GFRenderViewController {
+@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate> {
   CGPDFDocumentRef _pdf;
   
   NSString *_fileName;
@@ -18,6 +19,10 @@
   UIToolbar *_toolBar;
   
   UIScrollView *_scrollView;
+  
+  GFRenderTiledView *_tiledRenderView;
+  
+  NSInteger currentIndex_;
 
 }
 

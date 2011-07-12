@@ -10,6 +10,11 @@
 #import "GFHelpers.h"
 #import "GFImageCache.h"
 
+#define ZOOM_AMOUNT 0.25f
+#define NO_ZOOM_SCALE 1.0f
+#define MINIMUM_ZOOM_SCALE 1.0f
+#define MAXIMUM_ZOOM_SCALE 5.0f
+
 @implementation PDFViewController
 
 #pragma mark - View lifecycle
@@ -53,7 +58,21 @@
                                                               self.view.frame.size.width,
                                                               self.view.frame.size.height - _toolBar.frame.size.height)];
   [_scrollView setHidden:YES];
+  _scrollView.scrollsToTop = NO;
+	_scrollView.directionalLockEnabled = YES;
+	_scrollView.showsVerticalScrollIndicator = NO;
+	_scrollView.showsHorizontalScrollIndicator = NO;
+	_scrollView.contentMode = UIViewContentModeRedraw;
+	_scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_scrollView.minimumZoomScale = MINIMUM_ZOOM_SCALE; _scrollView.maximumZoomScale = MAXIMUM_ZOOM_SCALE;
+	_scrollView.contentSize = _scrollView.bounds.size;
+	_scrollView.backgroundColor = [UIColor clearColor];
+	_scrollView.delegate = self;
   [self.view addSubview:_scrollView];
+  
+  _tiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
+  _tiledRenderView.dataSource = self;
+  [_scrollView addSubview:_tiledRenderView];
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -100,15 +119,61 @@
   return _fileName;
 }
 
+- (CGPDFDocumentRef)document
+{
+  return _pdf;
+}
+
+- (CGPDFPageRef)page
+{
+  return CGPDFDocumentGetPage(_pdf, currentIndex_ + 1); 
+}
 
 
 - (IBAction)nextPage:(id)sender
 {
-  _renderView.currentItem = _renderView.currentItem+1;
+  if ( _scrollView.zoomScale == 1.f )
+  {  
+    if ( _scrollView.hidden == NO )
+    {
+      _scrollView.hidden = YES;      
+      
+      _renderView.hidden = NO;
+    }
+    
+    currentIndex_ = _renderView.currentItem = _renderView.currentItem+1;
+  }
 }
 
 - (IBAction)prevPage:(id)sender
 {
-  _renderView.currentItem = _renderView.currentItem-1;
+  if ( _scrollView.zoomScale == 1.f )
+  {
+    if ( _scrollView.hidden == NO )
+    {
+      _scrollView.hidden = YES;   
+      
+      _renderView.hidden = NO;
+    }
+    
+    currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
+  }
 }
+
+- (void)beginZoom
+{
+  _scrollView.hidden = NO;
+  
+  _renderView.hidden = YES;
+  
+  [_tiledRenderView reloadData];
+  
+  [self.view bringSubviewToFront:_scrollView];
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+	return _tiledRenderView;
+}
+
 @end

@@ -21,6 +21,8 @@
 		4A7223B813CA369400F99C33 /* GFHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223B713CA369400F99C33 /* GFHelpers.m */; };
 		4A7223C213CA375D00F99C33 /* Test.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7223C113CA375D00F99C33 /* Test.pdf */; };
 		4A7223C513CA3D6F00F99C33 /* GFRenderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */; };
+		4AF5A89813CCE98C00FD60F3 /* GFPDFTiledLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */; };
+		4AF5A89C13CCE9EA00FD60F3 /* GFRenderTiledView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,10 @@
 		4A7223C113CA375D00F99C33 /* Test.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Test.pdf; sourceTree = "<group>"; };
 		4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFRenderViewController.h; sourceTree = "<group>"; };
 		4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderViewController.m; sourceTree = "<group>"; };
+		4AF5A89613CCE98C00FD60F3 /* GFPDFTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFPDFTiledLayer.h; sourceTree = "<group>"; };
+		4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFPDFTiledLayer.m; sourceTree = "<group>"; };
+		4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = GFRenderTiledView.h; sourceTree = "<group>"; };
+		4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderTiledView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +117,10 @@
 				4A7223B713CA369400F99C33 /* GFHelpers.m */,
 				4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */,
 				4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */,
+				4AF5A89613CCE98C00FD60F3 /* GFPDFTiledLayer.h */,
+				4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */,
+				4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */,
+				4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */,
 				4A7223C113CA375D00F99C33 /* Test.pdf */,
 			);
 			path = PDF;
@@ -194,6 +204,8 @@
 				4A7223AC13CA228900F99C33 /* GFRenderView.m in Sources */,
 				4A7223B813CA369400F99C33 /* GFHelpers.m in Sources */,
 				4A7223C513CA3D6F00F99C33 /* GFRenderViewController.m in Sources */,
+				4AF5A89813CCE98C00FD60F3 /* GFPDFTiledLayer.m in Sources */,
+				4AF5A89C13CCE9EA00FD60F3 /* GFRenderTiledView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

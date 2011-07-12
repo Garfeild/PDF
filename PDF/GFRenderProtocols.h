@@ -25,3 +25,11 @@
 - (void)beginZoom;
 
 @end
+
+@protocol GFPDFRenderDataSource <NSObject>
+
+@required
+- (CGPDFDocumentRef)document;
+- (CGPDFPageRef)page;
+
+@end
