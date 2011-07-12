@@ -52,8 +52,6 @@
                                                               _toolBar.frame.size.height, 
                                                               self.view.frame.size.width,
                                                               self.view.frame.size.height - _toolBar.frame.size.height)];
-  _scrollView.zooming = YES;
-  _scrollView
   [_scrollView setHidden:YES];
   [self.view addSubview:_scrollView];
   
