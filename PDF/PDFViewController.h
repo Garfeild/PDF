@@ -23,6 +23,8 @@
   GFRenderTiledView *_tiledRenderView;
   
   NSInteger currentIndex_;
+  
+  BOOL zooming_;
 
 }
 

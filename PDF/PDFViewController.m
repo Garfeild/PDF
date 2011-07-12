@@ -74,6 +74,9 @@
   _tiledRenderView.dataSource = self;
   [_scrollView addSubview:_tiledRenderView];
   
+  [_tiledRenderView reloadData];
+
+  
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
                                  _toolBar.frame.size.height, 
@@ -81,6 +84,8 @@
                                  self.view.frame.size.height - _toolBar.frame.size.height);
   
   [self.view bringSubviewToFront:_renderView];
+  
+  zooming_ = NO;
 
 }
 
@@ -139,9 +144,13 @@
       _scrollView.hidden = YES;      
       
       _renderView.hidden = NO;
+      
+      zooming_ = NO;
     }
     
     currentIndex_ = _renderView.currentItem = _renderView.currentItem+1;
+    [_tiledRenderView reloadData];
+
   }
 }
 
@@ -154,9 +163,13 @@
       _scrollView.hidden = YES;   
       
       _renderView.hidden = NO;
+      
+      zooming_ = NO;
     }
     
     currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
+    [_tiledRenderView reloadData];
+
   }
 }
 
@@ -165,8 +178,25 @@
   _scrollView.hidden = NO;
   
   _renderView.hidden = YES;
+    
+  zooming_ = YES;
+
+  UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouchesOne:)];
+	tapGesture.cancelsTouchesInView = NO; 
+  tapGesture.delaysTouchesEnded = NO; //tapGesture.delegate = self;
+	tapGesture.numberOfTouchesRequired = 1; 
+  tapGesture.numberOfTapsRequired = 2; // One finger double tap
+	[self.view addGestureRecognizer:tapGesture]; 
+  [tapGesture release];
   
-  [_tiledRenderView reloadData];
+  CGFloat zoomScale = _scrollView.zoomScale;
+  
+  if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
+  {
+    zoomScale = ((zoomScale += ZOOM_AMOUNT) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
+    
+    [_scrollView setZoomScale:zoomScale animated:YES];
+  }
   
   [self.view bringSubviewToFront:_scrollView];
 }
@@ -174,6 +204,32 @@
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
 	return _tiledRenderView;
+}
+
+- (void)handleTouchesOne:(UITapGestureRecognizer *)recognizer
+{
+  CGRect tapAreaRect = CGRectZero;
+	CGRect viewBounds = recognizer.view.bounds;
+	CGPoint tapLocation = [recognizer locationInView:recognizer.view];
+  NSInteger numberOfTaps = recognizer.numberOfTapsRequired;
+
+  if (numberOfTaps == 2)	// Zoom area handling (double tap)
+  {
+    tapAreaRect = CGRectInset(viewBounds, 48.f, 48.f);
+    
+    if (CGRectContainsPoint(tapAreaRect, tapLocation))
+    {
+      CGFloat zoomScale = _scrollView.zoomScale;
+      
+      if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
+      {
+        zoomScale = ((zoomScale += ZOOM_AMOUNT) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
+        
+        [_scrollView setZoomScale:zoomScale animated:YES];
+      }
+    }
+  }
+  
 }
 
 @end
