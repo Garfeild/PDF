@@ -57,7 +57,7 @@
 
 		CGFloat max = (w_pixels < h_pixels) ? h_pixels : w_pixels;
 
-		CGFloat sizeOfTiles = (max < 512.0f) ? 512.0f : 1024.0f;
+		CGFloat sizeOfTiles = 1024.f;
 
 		self.tileSize = CGSizeMake(sizeOfTiles, sizeOfTiles);
 	}

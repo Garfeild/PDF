@@ -41,6 +41,7 @@
 
 - (void)drawLayer:(CATiledLayer *)layer inContext:(CGContextRef)context
 {
+  NSLog(@"Draw layer");
 	CGPDFPageRef drawPDFPageRef = NULL;
   
 	CGPDFDocumentRef drawPDFDocRef = NULL;

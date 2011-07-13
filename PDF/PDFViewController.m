@@ -57,7 +57,6 @@
                                                               _toolBar.frame.size.height, 
                                                               self.view.frame.size.width,
                                                               self.view.frame.size.height - _toolBar.frame.size.height)];
-  [_scrollView setHidden:YES];
   _scrollView.scrollsToTop = NO;
 	_scrollView.directionalLockEnabled = YES;
 	_scrollView.showsVerticalScrollIndicator = NO;
@@ -73,9 +72,6 @@
   _tiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
   _tiledRenderView.dataSource = self;
   [_scrollView addSubview:_tiledRenderView];
-  
-  [_tiledRenderView reloadData];
-
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -100,6 +96,8 @@
   _fileName = [[NSString alloc] initWithString:@"Test"];
       
   [super viewDidLoad];
+  
+  [_tiledRenderView reloadData];
 }
 
 
@@ -139,12 +137,10 @@
 {
   if ( _scrollView.zoomScale == 1.f )
   {  
-    if ( _scrollView.hidden == NO )
+    if ( zooming_ == YES )
     {
-      _scrollView.hidden = YES;      
-      
-      _renderView.hidden = NO;
-      
+      [_renderView setHidden:NO];
+      [self.view bringSubviewToFront:_renderView];
       zooming_ = NO;
     }
     
@@ -158,14 +154,13 @@
 {
   if ( _scrollView.zoomScale == 1.f )
   {
-    if ( _scrollView.hidden == NO )
+    if ( zooming_ == YES )
     {
-      _scrollView.hidden = YES;   
-      
-      _renderView.hidden = NO;
-      
+      [_renderView setHidden:NO];
+      [self.view bringSubviewToFront:_renderView];
       zooming_ = NO;
     }
+
     
     currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
     [_tiledRenderView reloadData];
@@ -174,11 +169,7 @@
 }
 
 - (void)beginZoom
-{
-  _scrollView.hidden = NO;
-  
-  _renderView.hidden = YES;
-    
+{    
   zooming_ = YES;
 
   UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouchesOne:)];
@@ -199,6 +190,9 @@
   }
   
   [self.view bringSubviewToFront:_scrollView];
+  
+  [_renderView setHidden:YES];
+
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
@@ -229,7 +223,15 @@
       }
     }
   }
-  
 }
 
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
+{
+  if ( scale == 1.f )
+  {
+    [_renderView setHidden:NO];
+    [self.view bringSubviewToFront:_renderView];
+    zooming_ = NO;
+  }
+}
 @end

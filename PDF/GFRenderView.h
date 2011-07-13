@@ -17,17 +17,36 @@
   id<GFRenderDelegate> _delegate;
   
   CALayer *_topLayer;
+	CALayer *_topLayerOverlay;
+	CAGradientLayer *_topLayerShadow;
+	
+	CALayer *_topLayerReversed;
+	CALayer *_topLayerReversedImage;
+	CALayer *_topLayerReversedOverlay;
+	CAGradientLayer *_topLayerReversedShading;
+	
+	CALayer *_bottomLayer;
+	CAGradientLayer *_bottomLayerShadow;
   
   NSInteger currentItem_;
   
   CGRect  nextPageArea_,
           prevPageArea_;
   
+  CGPoint touchBeganPoint_;
+  
+  CGFloat pageEdge_;
+  
+  BOOL animationIsRunning_;
+  
+  BOOL touchIsActive_;
+  
 }
 
 @property (assign) id<GFRenderDataSource> dataSource;
 @property (assign) id<GFRenderDelegate> delegate;
 @property (assign) NSInteger currentItem;
+@property (assign) CGFloat pageEdge;
 
 - (void)reloadData;
 
