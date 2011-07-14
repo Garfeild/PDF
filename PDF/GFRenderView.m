@@ -13,6 +13,8 @@
 
 - (void)initLayers;
 
+- (void)setLayerFrames;
+
 @end
 
 CGFloat distance(CGPoint a, CGPoint b);
@@ -75,7 +77,10 @@ CGFloat distance(CGPoint a, CGPoint b);
   
   prevPageArea_ = CGRectMake(0, 0, 100, self.frame.size.height);
   
-  self.pageEdge = 0.f;
+  self.pageEdge = 1.f;
+  
+  [self setLayerFrames];
+
 }
 
 - (void)initLayers
@@ -136,6 +141,8 @@ CGFloat distance(CGPoint a, CGPoint b);
 	[self.layer addSublayer:_bottomLayer];
 	[self.layer addSublayer:_topLayer];
 	[self.layer addSublayer:_topLayerReversed];
+  
+  self.pageEdge = 1.0;
 
 }
 
