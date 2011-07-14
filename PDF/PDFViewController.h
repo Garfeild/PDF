@@ -25,6 +25,8 @@
   NSInteger currentIndex_;
   
   BOOL zooming_;
+  
+  UIPinchGestureRecognizer *_pinch;
 
 }
 

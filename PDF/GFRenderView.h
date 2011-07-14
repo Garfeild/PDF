@@ -41,12 +41,15 @@
   
   BOOL touchIsActive_;
   
+  BOOL lockedOtherView_;
+  
 }
 
 @property (assign) id<GFRenderDataSource> dataSource;
 @property (assign) id<GFRenderDelegate> delegate;
 @property (assign) NSInteger currentItem;
 @property (assign) CGFloat pageEdge;
+@property (assign) BOOL lockedOtherView;
 
 - (void)reloadData;
 

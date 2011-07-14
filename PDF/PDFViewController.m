@@ -19,6 +19,19 @@
 
 #pragma mark - View lifecycle
 
+- (void)addPinchRegonizer
+{
+  _pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+	_pinch.cancelsTouchesInView = NO; 
+  _pinch.delaysTouchesEnded = NO; //tapGesture.delegate = self;
+	[_renderView addGestureRecognizer:_pinch]; 
+}
+
+- (void)addDoubleTapRecognizer
+{
+  
+}
+
 - (void)createToolBar
 {
   _toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
@@ -83,6 +96,16 @@
   
   zooming_ = NO;
 
+  [self addPinchRegonizer];
+  
+  UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouchesOne:)];
+	tapGesture.cancelsTouchesInView = NO; 
+  tapGesture.delaysTouchesEnded = NO; //tapGesture.delegate = self;
+	tapGesture.numberOfTouchesRequired = 1; 
+  tapGesture.numberOfTapsRequired = 2; // One finger double tap
+	[self.view addGestureRecognizer:tapGesture]; 
+  [tapGesture release];
+
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -132,6 +155,19 @@
   return CGPDFDocumentGetPage(_pdf, currentIndex_ + 1); 
 }
 
+- (void)switchViews:(BOOL)zoomin
+{
+  if ( zoomin )
+  {
+    [self.view bringSubviewToFront:_scrollView];
+    [_renderView setHidden:YES];
+  }
+  else
+  {
+    [_renderView setHidden:NO];
+    [self.view bringSubviewToFront:_renderView];
+  }
+}
 
 - (IBAction)nextPage:(id)sender
 {
@@ -139,9 +175,9 @@
   {  
     if ( zooming_ == YES )
     {
-      [_renderView setHidden:NO];
-      [self.view bringSubviewToFront:_renderView];
       zooming_ = NO;
+      [self switchViews:NO];
+      _renderView.lockedOtherView = NO;
     }
     
     currentIndex_ = _renderView.currentItem = _renderView.currentItem+1;
@@ -156,12 +192,11 @@
   {
     if ( zooming_ == YES )
     {
-      [_renderView setHidden:NO];
-      [self.view bringSubviewToFront:_renderView];
       zooming_ = NO;
+      [self switchViews:NO];
+      _renderView.lockedOtherView = NO;
     }
 
-    
     currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
     [_tiledRenderView reloadData];
 
@@ -172,26 +207,18 @@
 {    
   zooming_ = YES;
 
-  UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTouchesOne:)];
-	tapGesture.cancelsTouchesInView = NO; 
-  tapGesture.delaysTouchesEnded = NO; //tapGesture.delegate = self;
-	tapGesture.numberOfTouchesRequired = 1; 
-  tapGesture.numberOfTapsRequired = 2; // One finger double tap
-	[self.view addGestureRecognizer:tapGesture]; 
-  [tapGesture release];
-  
+  _renderView.lockedOtherView = YES;
+    
   CGFloat zoomScale = _scrollView.zoomScale;
-  
+
   if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
   {
     zoomScale = ((zoomScale += ZOOM_AMOUNT) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
-    
-    [_scrollView setZoomScale:zoomScale animated:YES];
   }
-  
-  [self.view bringSubviewToFront:_scrollView];
-  
-  [_renderView setHidden:YES];
+
+  [_scrollView setZoomScale:zoomScale animated:YES];
+
+  [self switchViews:YES];
 
 }
 
@@ -225,13 +252,29 @@
   }
 }
 
+- (void)handlePinch:(UIPinchGestureRecognizer*)recongnizer
+{
+  NSLog(@"PINCH! %f", recongnizer.scale);
+  CGFloat zoomScale = _scrollView.zoomScale;
+  
+  if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
+  {
+    zoomScale = ((zoomScale += recongnizer.scale/5) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
+    
+    [_scrollView setZoomScale:zoomScale animated:YES];
+  }
+
+
+  [self switchViews:YES];
+}
+
 - (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
 {
   if ( scale == 1.f )
   {
-    [_renderView setHidden:NO];
-    [self.view bringSubviewToFront:_renderView];
     zooming_ = NO;
+    [self switchViews:NO];
+    _renderView.lockedOtherView = NO;
   }
 }
 @end

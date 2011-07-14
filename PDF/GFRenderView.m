@@ -25,6 +25,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 @synthesize delegate    = _delegate;
 @synthesize currentItem = currentItem_;
 @synthesize pageEdge    = pageEdge_;
+@synthesize lockedOtherView = lockedOtherView_;
 
 - (id)init
 {
@@ -143,6 +144,8 @@ CGFloat distance(CGPoint a, CGPoint b);
 	[self.layer addSublayer:_topLayerReversed];
   
   self.pageEdge = 1.0;
+  
+  lockedOtherView_ = NO;
 
 }
 
@@ -187,7 +190,8 @@ CGFloat distance(CGPoint a, CGPoint b);
 	[CATransaction commit];
 }
 
-- (void) setLayerFrames {
+- (void)setLayerFrames 
+{
 	_topLayer.frame = CGRectMake(self.layer.bounds.origin.x, 
                              self.layer.bounds.origin.y, 
                              pageEdge_ * self.bounds.size.width, 
@@ -215,7 +219,8 @@ CGFloat distance(CGPoint a, CGPoint b);
 	_topLayerReversedOverlay.frame = _topLayer.bounds;
 }
 
-- (void)setPageEdge:(CGFloat)aPageEdge {
+- (void)setPageEdge:(CGFloat)aPageEdge 
+{
   NSLog(@"Setting leaf edge");
   
 	pageEdge_ = aPageEdge;
@@ -225,16 +230,19 @@ CGFloat distance(CGPoint a, CGPoint b);
 	[self setLayerFrames];
 }
 
-- (void) didTurnPageBackward {
+- (void)didTurnPageBackward 
+{
 	animationIsRunning_ = NO;
 }
 
-- (void) didTurnPageForward {
+- (void)didTurnPageForward 
+{
 	animationIsRunning_ = NO;
 	self.currentItem = self.currentItem + 1;	
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
 	if (animationIsRunning_)
 		return;
 	
@@ -260,14 +268,17 @@ CGFloat distance(CGPoint a, CGPoint b);
     {
       NSLog(@"Double touch");
       [_delegate beginZoom];
-    }
-		touchIsActive_ = NO;
+    }    
+    touchIsActive_ = NO;
   }
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event 
+{
+  
 	if (!touchIsActive_)
 		return;
+  
 	UITouch *touch = [event.allTouches anyObject];
 	CGPoint touchPoint = [touch locationInView:self];
 	
@@ -279,7 +290,9 @@ CGFloat distance(CGPoint a, CGPoint b);
 }
 
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event 
+{  
+  
 	if (!touchIsActive_)
 		return;
 	touchIsActive_ = NO;
@@ -291,7 +304,9 @@ CGFloat distance(CGPoint a, CGPoint b);
 	
 	[CATransaction begin];
 	float duration;
-	if ( ( dragged && self.pageEdge < 0.5 ) || ( !dragged && CGRectContainsPoint(nextPageArea_, touchBeganPoint_) ) ) {
+  
+	if ( ( dragged && self.pageEdge < 0.5 ) || ( !dragged && CGRectContainsPoint(nextPageArea_, touchBeganPoint_) ) ) 
+  {
 		self.pageEdge = 0;
 		duration = pageEdge_;
 		animationIsRunning_ = YES;
@@ -299,7 +314,8 @@ CGFloat distance(CGPoint a, CGPoint b);
                withObject:nil 
                afterDelay:duration + 0.25];
 	}
-	else {
+	else 
+  {
 		self.pageEdge = 1.0;
 		duration = 1 - pageEdge_;
 		animationIsRunning_ = YES;
@@ -307,6 +323,7 @@ CGFloat distance(CGPoint a, CGPoint b);
                withObject:nil 
                afterDelay:duration + 0.25];
 	}
+  
 	[CATransaction setValue:[NSNumber numberWithFloat:duration]
                    forKey:kCATransactionAnimationDuration];
 	[CATransaction commit];
