@@ -10,6 +10,10 @@
 #import <QuartzCore/QuartzCore.h>
 #import "GFRenderProtocols.h"
 
+typedef enum {
+  GFRenderViewModeSinglePage = 0,
+  GFRenderViewModeFacingPages,
+} GFRenderViewMode;
 
 @interface GFRenderView : UIView {
 
@@ -19,6 +23,9 @@
   CALayer *_topLayer;
 	CALayer *_topLayerOverlay;
 	CAGradientLayer *_topLayerShadow;
+  
+  CALayer *_facingLayer;
+	CALayer *_facingLayerOverlay;
 	
 	CALayer *_topLayerReversed;
 	CALayer *_topLayerReversedImage;
@@ -29,6 +36,9 @@
 	CAGradientLayer *_bottomLayerShadow;
   
   NSInteger currentItem_;
+  NSInteger numberOfItems_;
+  
+  NSInteger numberOfVisiblePages_;
   
   CGRect  nextPageArea_,
           prevPageArea_;
@@ -43,6 +53,10 @@
   
   BOOL lockedOtherView_;
   
+  GFRenderViewMode renderViewMode_;
+  
+  
+  
 }
 
 @property (assign) id<GFRenderDataSource> dataSource;
@@ -50,6 +64,7 @@
 @property (assign) NSInteger currentItem;
 @property (assign) CGFloat pageEdge;
 @property (assign) BOOL lockedOtherView;
+@property (assign) GFRenderViewMode renderViewMode;
 
 - (void)reloadData;
 

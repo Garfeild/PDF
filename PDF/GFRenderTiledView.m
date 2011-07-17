@@ -12,6 +12,7 @@
 @implementation GFRenderTiledView
 
 @synthesize dataSource = _dataSource;
+@synthesize mode = mode_;
 
 + (Class)layerClass
 {
@@ -25,11 +26,14 @@
     // Initialization code
     self.autoresizesSubviews = NO;
     self.userInteractionEnabled = NO;
-    self.contentMode = UIViewContentModeScaleAspectFit; // For proper view rotation handling
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // N.B.
-    self.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-    self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.clipsToBounds = YES;
+
+//    self.contentMode = UIViewContentModeScaleAspectFit; // For proper view rotation handling
+//    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // N.B.
+//    self.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+//    self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.backgroundColor = [UIColor clearColor];
+    self.mode = GFTiledRenderViewModeRight;
   }
   return self;
 }
@@ -41,7 +45,7 @@
 
 - (void)drawLayer:(CATiledLayer *)layer inContext:(CGContextRef)context
 {
-  NSLog(@"Draw layer");
+  NSLog(@"Draw layer %@", ( mode_ == GFTiledRenderViewModeRight ) ? @"Right" : @"Left");
 	CGPDFPageRef drawPDFPageRef = NULL;
   
 	CGPDFDocumentRef drawPDFDocRef = NULL;
@@ -50,7 +54,7 @@
 	{
 		drawPDFDocRef = CGPDFDocumentRetain([_dataSource document]);
     
-		drawPDFPageRef = CGPDFPageRetain([_dataSource page]);
+		drawPDFPageRef = ( mode_ == GFTiledRenderViewModeRight ) ? CGPDFPageRetain([_dataSource page]) :  CGPDFPageRetain([_dataSource pageWithOffset:-1]) ;
 	}
   
 	CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f); // White

@@ -66,7 +66,8 @@ static GFImageCache *imageCache = nil;
 
 - (CGImageRef)itemForIndex:(NSInteger)index dataSource:(id<GFRenderDataSource>)dataSource
 {
-  NSString *itemKey = [NSString stringWithFormat:@"%@ - %d", [dataSource fileName], index];
+  NSString *itemKey = [NSString stringWithFormat:@"%@ - %d - %.0fx%.0f", [dataSource fileName], index, pageSize_.width, pageSize_.height];
+  NSLog(@"Item key: %@", itemKey);
   if ( [[_cache allKeys] containsObject:itemKey] )
     return [(UIImage*)[_cache objectForKey:itemKey] CGImage];
   

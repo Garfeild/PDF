@@ -13,7 +13,13 @@
 
 - (void)initLayers;
 
-- (void)setLayerFrames;
+- (void)getImages;
+
+- (void)updateLayersFrames;
+
+- (void)updateLayersForNewMode;
+
+- (void)updateTouchFrames;
 
 @end
 
@@ -21,11 +27,15 @@ CGFloat distance(CGPoint a, CGPoint b);
 
 @implementation GFRenderView
 
-@synthesize dataSource  = _dataSource;
-@synthesize delegate    = _delegate;
-@synthesize currentItem = currentItem_;
-@synthesize pageEdge    = pageEdge_;
+@synthesize dataSource      = _dataSource;
+@synthesize delegate        = _delegate;
+@synthesize currentItem     = currentItem_;
+@synthesize pageEdge        = pageEdge_;
 @synthesize lockedOtherView = lockedOtherView_;
+@synthesize renderViewMode  = renderViewMode_;
+
+#pragma mark -
+#pragma mark Initializations
 
 - (id)init
 {
@@ -59,6 +69,8 @@ CGFloat distance(CGPoint a, CGPoint b);
       [self initLayers];
       
       animationIsRunning_ = NO;
+      
+      self.renderViewMode = GFRenderViewModeSinglePage;
     }
     return self;
 }
@@ -70,18 +82,17 @@ CGFloat distance(CGPoint a, CGPoint b);
 
 - (void)reloadData
 {
+  numberOfItems_ = [_dataSource numberOfItems:self];
+
   self.currentItem = 0;
   
   _topLayer.frame = CGRectMake(0, 0, self.layer.bounds.size.width, self.layer.bounds.size.height);
   
-  nextPageArea_ = CGRectMake(self.frame.size.width-100, 0, 100, self.frame.size.height);
-  
-  prevPageArea_ = CGRectMake(0, 0, 100, self.frame.size.height);
-  
   self.pageEdge = 1.f;
   
-  [self setLayerFrames];
-
+  [self updateLayersFrames];
+  
+  [self updateTouchFrames];
 }
 
 - (void)initLayers
@@ -120,6 +131,16 @@ CGFloat distance(CGPoint a, CGPoint b);
                                   nil];
 	_topLayerReversedShading.startPoint = CGPointMake(1,0.5);
 	_topLayerReversedShading.endPoint = CGPointMake(0,0.5);
+  
+  _facingLayer = [[CALayer alloc] init];
+	_facingLayer.masksToBounds = YES;
+	_facingLayer.contentsGravity = kCAGravityLeft;
+	_facingLayer.backgroundColor = [[UIColor whiteColor] CGColor];
+	
+	_facingLayerOverlay = [[CALayer alloc] init];
+	_facingLayerOverlay.backgroundColor = [[[UIColor blackColor] colorWithAlphaComponent:0.2] CGColor];
+  
+
 	
 	_bottomLayer = [[CALayer alloc] init];
 	_bottomLayer.backgroundColor = [[UIColor whiteColor] CGColor];
@@ -135,10 +156,16 @@ CGFloat distance(CGPoint a, CGPoint b);
 	
 	[_topLayer addSublayer:_topLayerShadow];
 	[_topLayer addSublayer:_topLayerOverlay];
-	[_topLayerReversed addSublayer:_topLayerReversedImage];
+	
+  [_topLayerReversed addSublayer:_topLayerReversedImage];
 	[_topLayerReversed addSublayer:_topLayerReversedOverlay];
 	[_topLayerReversed addSublayer:_topLayerReversedShading];
+
+  [_facingLayer addSublayer:_facingLayerOverlay];
+
 	[_bottomLayer addSublayer:_bottomLayerShadow];
+  
+	[self.layer addSublayer:_facingLayer];
 	[self.layer addSublayer:_bottomLayer];
 	[self.layer addSublayer:_topLayer];
 	[self.layer addSublayer:_topLayerReversed];
@@ -151,33 +178,45 @@ CGFloat distance(CGPoint a, CGPoint b);
 
 - (void)getImages
 {
-  _topLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_
-                                                        dataSource:_dataSource];
+  NSInteger facingOffset = ( renderViewMode_ == GFRenderViewModeFacingPages ) ? 1 : 0;
   
-  
-  if ( currentItem_ < [_dataSource numberOfItems:self] ) 
+  if ( ( currentItem_ < numberOfItems_ ) || 
+      ( currentItem_ <= numberOfItems_ && renderViewMode_ == GFRenderViewModeFacingPages ) )
   {
     _topLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_
                                                           dataSource:_dataSource];
-    _topLayerReversedImage.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_
-                                                          dataSource:_dataSource];
-		if ( currentItem_ < [_dataSource numberOfItems:self]- 1 )
-			_bottomLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_+1
-                                                              dataSource:_dataSource];
-	} else {
-		_topLayer.contents = nil;
-		_topLayerReversedImage.contents = nil;
-		_bottomLayer.contents = nil;
-	}
-  
+    if ( renderViewMode_ == GFRenderViewModeSinglePage || currentItem_ == 0 )
+    {
+      _facingLayer.contents = nil;
+    }
+    else if (currentItem_ > 0) 
+      {
+        _facingLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_-1 dataSource:_dataSource];
+      } 
+    
+    if ( currentItem_ < numberOfItems_- 1 )
+    {
+      _bottomLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_+1+facingOffset
+                                                               dataSource:_dataSource];
+      
+      _topLayerReversedImage.contents = (id)[[GFImageCache imageCache] itemForIndex:currentItem_+facingOffset dataSource:_dataSource];
+ 
+    }
+  }
 }
+
+#pragma mark -
+#pragma mark Setters
 
 - (void)setCurrentItem:(NSInteger)currentItem 
 {
   NSLog(@"Setting current item %d", currentItem);
-  if ( currentItem < 0 || currentItem > [_dataSource numberOfItems:self]-1 )
+  if ( currentItem < 0 || currentItem > numberOfItems_-1 )
     return;
 	currentItem_ = currentItem;
+  
+  if ( renderViewMode_ == GFRenderViewModeFacingPages && currentItem % 2 != 0)
+    currentItem_ += 1;
 	
 	[CATransaction begin];
 	[CATransaction setValue:(id)kCFBooleanTrue
@@ -190,45 +229,124 @@ CGFloat distance(CGPoint a, CGPoint b);
 	[CATransaction commit];
 }
 
-- (void)setLayerFrames 
-{
-	_topLayer.frame = CGRectMake(self.layer.bounds.origin.x, 
-                             self.layer.bounds.origin.y, 
-                             pageEdge_ * self.bounds.size.width, 
-                             self.layer.bounds.size.height);
-	_topLayerReversed.frame = CGRectMake(self.layer.bounds.origin.x + (2*pageEdge_-1) * self.bounds.size.width, 
-                                    self.layer.bounds.origin.y, 
-                                    (1-pageEdge_) * self.bounds.size.width, 
-                                    self.layer.bounds.size.height);
-	_bottomLayer.frame = self.layer.bounds;
-	_topLayerShadow.frame = CGRectMake(_topLayerReversed.frame.origin.x - 40, 
-                                   0, 
-                                   40, 
-                                   _bottomLayer.bounds.size.height);
-	_topLayerReversedImage.frame = _topLayerReversed.bounds;
-	_topLayerReversedImage.transform = CATransform3DMakeScale(-1, 1, 1);
-	_topLayerReversedOverlay.frame = _topLayerReversed.bounds;
-	_topLayerReversedShading.frame = CGRectMake(_topLayerReversed.bounds.size.width - 50, 
-                                           0, 
-                                           50 + 1, 
-                                           _topLayerReversed.bounds.size.height);
-	_bottomLayerShadow.frame = CGRectMake(pageEdge_ * self.bounds.size.width, 
-                                      0, 
-                                      40, 
-                                      _bottomLayer.bounds.size.height);
-	_topLayerReversedOverlay.frame = _topLayer.bounds;
-}
-
 - (void)setPageEdge:(CGFloat)aPageEdge 
 {
   NSLog(@"Setting leaf edge");
   
 	pageEdge_ = aPageEdge;
-	_topLayerShadow.opacity = MIN(1.0, 4*(1-aPageEdge));
+  CGFloat layerOpacity = MIN(1.0, 4*(1-aPageEdge));
+  
+	_topLayerShadow.opacity = layerOpacity;
+  
 	_bottomLayerShadow.opacity = MIN(1.0, 4*aPageEdge);
-	_topLayerOverlay.opacity = MIN(1.0, 4*(1-aPageEdge));
-	[self setLayerFrames];
+	_topLayerOverlay.opacity = layerOpacity;
+  _facingLayerOverlay.opacity = layerOpacity;
+	[self updateLayersFrames];
 }
+
+- (void)setRenderViewMode:(GFRenderViewMode)renderViewMode
+{
+  renderViewMode_ = renderViewMode;
+  
+  if (renderViewMode == GFRenderViewModeSinglePage)
+  {
+    numberOfVisiblePages_ = 1;
+    if (self.currentItem > numberOfItems_ - 1)
+    {
+      self.currentItem = numberOfItems_ - 1;
+    }
+    
+  } else
+  {
+    numberOfVisiblePages_ = 2;
+    if (self.currentItem % 2 != 0) {
+      self.currentItem++;
+    }
+  }
+  
+  [self updateLayersForNewMode];
+  [self updateTouchFrames];
+  [self setNeedsLayout];
+}
+
+
+#pragma mark - 
+#pragma mark Updaters
+
+- (void)updateLayersFrames 
+{
+  CGRect topLayerBounds = self.layer.bounds;
+  CGRect leftPage, rightPage;
+  CGRectDivide(topLayerBounds, &leftPage, &rightPage, CGRectGetWidth(topLayerBounds) / 2.0f, CGRectMinXEdge);
+  
+  if (renderViewMode_ == GFRenderViewModeFacingPages) 
+    topLayerBounds = rightPage;
+
+	_topLayer.frame = CGRectMake(topLayerBounds.origin.x, 
+                             topLayerBounds.origin.y, 
+                             pageEdge_ * topLayerBounds.size.width, 
+                             topLayerBounds.size.height);
+  
+	_topLayerReversed.frame = CGRectMake(topLayerBounds.origin.x + (2*pageEdge_-1) * topLayerBounds.size.width, 
+                                    topLayerBounds.origin.y, 
+                                    (1-pageEdge_) * topLayerBounds.size.width, 
+                                    topLayerBounds.size.height);
+  
+	_bottomLayer.frame = topLayerBounds;
+  
+	_topLayerShadow.frame = CGRectMake(_topLayerReversed.frame.origin.x - 40, 
+                                   0, 
+                                   40, 
+                                   _bottomLayer.bounds.size.height);
+  
+	_topLayerReversedImage.frame = _topLayerReversed.bounds;
+  
+	_topLayerReversedOverlay.frame = _topLayerReversed.bounds;
+  
+	_topLayerReversedShading.frame = CGRectMake(_topLayerReversed.bounds.size.width - 50, 
+                                           0, 
+                                           50 + 1, 
+                                           _topLayerReversed.bounds.size.height);
+	_bottomLayerShadow.frame = CGRectMake(pageEdge_ * topLayerBounds.size.width, 
+                                      0, 
+                                      40, 
+                                      _bottomLayer.bounds.size.height);
+  
+	_topLayerReversedOverlay.frame = _topLayer.bounds;
+
+  _facingLayer.hidden = ( renderViewMode_ == GFRenderViewModeSinglePage ) ? YES : NO;
+  _facingLayer.frame = CGRectMake(leftPage.origin.x, 
+                              leftPage.origin.y, 
+                              leftPage.size.width, 
+                              leftPage.size.height);
+  
+  _facingLayerOverlay.hidden = _facingLayer.hidden;
+  _facingLayerOverlay.frame = _facingLayer.bounds;
+
+}
+
+- (void)updateLayersForNewMode
+{
+  if ( renderViewMode_ == GFRenderViewModeSinglePage) 
+  {
+    _topLayerReversedImage.contentsGravity = kCAGravityRight;
+    _topLayerReversedOverlay.backgroundColor = [[[UIColor whiteColor] colorWithAlphaComponent:0.8] CGColor];
+    _topLayerReversedImage.transform = CATransform3DMakeScale(-1, 1, 1);
+  } else 
+  {
+    _topLayerReversedImage.contentsGravity = kCAGravityLeft;
+    _topLayerReversedOverlay.backgroundColor = [[[UIColor whiteColor] colorWithAlphaComponent:0.0] CGColor];
+    _topLayerReversedImage.transform = CATransform3DMakeScale(1, 1, 1);
+  }
+}
+
+- (void)updateTouchFrames
+{
+    nextPageArea_ = CGRectMake(self.frame.size.width-100, 0, 100, self.frame.size.height);
+    
+    prevPageArea_ = CGRectMake(0, 0, 100, self.frame.size.height); 
+}
+
 
 - (void)didTurnPageBackward 
 {
@@ -253,12 +371,12 @@ CGFloat distance(CGPoint a, CGPoint b);
 		[CATransaction begin];
 		[CATransaction setValue:(id)kCFBooleanTrue
                      forKey:kCATransactionDisableActions];
-		self.currentItem = self.currentItem - 1;
+		self.currentItem = self.currentItem - numberOfVisiblePages_;
 		self.pageEdge = 0.0;
 		[CATransaction commit];
 		touchIsActive_ = YES;		
 	} 
-	else if ( CGRectContainsPoint(nextPageArea_, touchBeganPoint_) && currentItem_ < [_dataSource numberOfItems:self]-1 )
+	else if ( CGRectContainsPoint(nextPageArea_, touchBeganPoint_) && currentItem_ < numberOfItems_-1 )
   {
 		touchIsActive_ = YES;
 	}
@@ -328,6 +446,28 @@ CGFloat distance(CGPoint a, CGPoint b);
                    forKey:kCATransactionAnimationDuration];
 	[CATransaction commit];
 }
+
+- (void) layoutSubviews {
+	[super layoutSubviews];
+  
+  NSLog(@"Layout Subviews");
+  
+	CGSize desiredPageSize = ( renderViewMode_ == GFRenderViewModeSinglePage ) ? self.bounds.size : CGSizeMake(self.bounds.size.width/2.0f, self.bounds.size.height);
+
+	if (!CGSizeEqualToSize([[GFImageCache imageCache] pageSize], desiredPageSize)) {
+		
+		[CATransaction begin];
+		[CATransaction setValue:(id)kCFBooleanTrue
+                     forKey:kCATransactionDisableActions];
+		[self updateLayersFrames];
+		[CATransaction commit];
+		[[GFImageCache imageCache] setPageSize:desiredPageSize];
+		[self getImages];
+		
+		[self updateTouchFrames];
+	}
+}
+
 @end
 
 CGFloat distance(CGPoint a, CGPoint b) {

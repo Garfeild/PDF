@@ -18,6 +18,7 @@
 {
   NSLog(@"Init render");
   _renderView = [[GFRenderView alloc] initWithFrame:CGRectZero];
+
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -72,10 +73,21 @@
   
   _renderView.delegate = self;
   _renderView.dataSource = self;
-  
+
+  _renderView.renderViewMode = ( UIInterfaceOrientationIsPortrait(self.interfaceOrientation) ) ? GFRenderViewModeSinglePage : GFRenderViewModeFacingPages;
+
   [_renderView reloadData];
 }
 
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+  return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+  _renderView.renderViewMode = ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) ) ? GFRenderViewModeSinglePage : GFRenderViewModeFacingPages;
+}
 
 #pragma mark - Data source methods
 

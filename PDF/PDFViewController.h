@@ -20,7 +20,10 @@
   
   UIScrollView *_scrollView;
   
-  GFRenderTiledView *_tiledRenderView;
+  UIView *_hostView;
+  
+  GFRenderTiledView *_rightTiledRenderView;
+  GFRenderTiledView *_leftTiledRenderView;
   
   NSInteger currentIndex_;
   

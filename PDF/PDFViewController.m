@@ -37,6 +37,7 @@
   _toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
   _toolBar.barStyle = UIBarStyleDefault;
   _toolBar.center = CGPointMake(self.view.frame.size.width/2, _toolBar.frame.size.height/2);
+  _toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
   
   UIBarButtonItem *button = nil;
   NSMutableArray *items = [[NSMutableArray alloc] init];
@@ -82,9 +83,33 @@
 	_scrollView.delegate = self;
   [self.view addSubview:_scrollView];
   
-  _tiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
-  _tiledRenderView.dataSource = self;
-  [_scrollView addSubview:_tiledRenderView];
+  _hostView = [[UIView alloc] initWithFrame:_scrollView.bounds];
+  _hostView.autoresizesSubviews = NO;
+  _hostView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [_scrollView addSubview:_hostView];
+               
+  _leftTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
+  _leftTiledRenderView.dataSource = self;
+  _leftTiledRenderView.hidden = YES;
+  _leftTiledRenderView.mode = GFTiledRenderViewModeLeft;
+  [_hostView addSubview:_leftTiledRenderView];
+  
+  _rightTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
+  _rightTiledRenderView.dataSource = self;
+  [_hostView addSubview:_rightTiledRenderView];
+  
+  if ( UIInterfaceOrientationIsPortrait(self.interfaceOrientation) )
+  {
+    _leftTiledRenderView.hidden = NO; 
+    _leftTiledRenderView.frame = CGRectMake(0, 
+                                            0, 
+                                            _scrollView.frame.size.width/2, 
+                                            _scrollView.frame.size.height);
+    _leftTiledRenderView.frame = CGRectMake(_leftTiledRenderView.frame.size.width, 
+                                            0, 
+                                            _leftTiledRenderView.frame.size.width, 
+                                            _leftTiledRenderView.frame.size.height); 
+  }
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -120,7 +145,9 @@
       
   [super viewDidLoad];
   
-  [_tiledRenderView reloadData];
+  [_rightTiledRenderView reloadData];
+  [_leftTiledRenderView reloadData];
+
 }
 
 
@@ -155,6 +182,15 @@
   return CGPDFDocumentGetPage(_pdf, currentIndex_ + 1); 
 }
 
+- (CGPDFPageRef)pageAtIndex:(NSInteger)index
+{
+  return CGPDFDocumentGetPage(_pdf, index + 1); 
+}
+
+- (CGPDFPageRef)pageWithOffset:(NSInteger)offset {
+  return CGPDFDocumentGetPage(_pdf, currentIndex_ + offset + 1); 
+}
+
 - (void)switchViews:(BOOL)zoomin
 {
   if ( zoomin )
@@ -181,7 +217,7 @@
     }
     
     currentIndex_ = _renderView.currentItem = _renderView.currentItem+1;
-    [_tiledRenderView reloadData];
+    [_rightTiledRenderView reloadData];
 
   }
 }
@@ -198,7 +234,7 @@
     }
 
     currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
-    [_tiledRenderView reloadData];
+    [_rightTiledRenderView reloadData];
 
   }
 }
@@ -224,7 +260,7 @@
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
-	return _tiledRenderView;
+	return _hostView;
 }
 
 - (void)handleTouchesOne:(UITapGestureRecognizer *)recognizer
@@ -276,5 +312,31 @@
     [self switchViews:NO];
     _renderView.lockedOtherView = NO;
   }
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+  
+  [UIView animateWithDuration:duration animations:^(void) {
+    if ( UIInterfaceOrientationIsLandscape(toInterfaceOrientation) )
+    {
+      _leftTiledRenderView.hidden = YES;
+      _rightTiledRenderView.frame = _scrollView.bounds;
+    }
+    else
+    {
+      NSLog(@"_scrollView frame: %fx%f", _scrollView.frame.size.width, _scrollView.frame.size.height);
+      _leftTiledRenderView.hidden = NO; 
+      _leftTiledRenderView.frame = CGRectMake(0, 
+                                              0, 
+                                              _scrollView.frame.size.width/2, 
+                                              _scrollView.frame.size.height);
+      _leftTiledRenderView.frame = CGRectMake(_leftTiledRenderView.frame.size.width, 
+                                              0, 
+                                              _leftTiledRenderView.frame.size.width, 
+                                              _leftTiledRenderView.frame.size.height);
+    }
+  }];
 }
 @end
