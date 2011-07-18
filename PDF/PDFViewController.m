@@ -325,6 +325,8 @@
 {
   
   NSLog(@"Will rotate");
+  if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
+      _rightTiledRenderView.hidden = YES;
 
   [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];  
   
