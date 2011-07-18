@@ -13,6 +13,7 @@
 
 @synthesize dataSource = _dataSource;
 @synthesize mode = mode_;
+@synthesize rotated = rotated_;
 
 + (Class)layerClass
 {
@@ -28,12 +29,13 @@
     self.userInteractionEnabled = NO;
     self.clipsToBounds = YES;
 
-//    self.contentMode = UIViewContentModeScaleAspectFit; // For proper view rotation handling
-//    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // N.B.
-//    self.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-//    self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.contentMode = UIViewContentModeScaleAspectFit; // For proper view rotation handling
+    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight; // N.B.
+    self.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.backgroundColor = [UIColor clearColor];
-    self.mode = GFTiledRenderViewModeRight;
+    rotated_ = NO;
+    mode_ = GFRenderTiledViewModeLeft;
   }
   return self;
 }
@@ -45,36 +47,49 @@
 
 - (void)drawLayer:(CATiledLayer *)layer inContext:(CGContextRef)context
 {
-  NSLog(@"Draw layer %@", ( mode_ == GFTiledRenderViewModeRight ) ? @"Right" : @"Left");
-	CGPDFPageRef drawPDFPageRef = NULL;
-  
-	CGPDFDocumentRef drawPDFDocRef = NULL;
-  
+  NSLog(@"*********");
+   
+	CGPDFPageRef drawPageRef = NULL;
+
 	@synchronized(self) // Block any other threads
-	{
-		drawPDFDocRef = CGPDFDocumentRetain([_dataSource document]);
-    
-		drawPDFPageRef = ( mode_ == GFTiledRenderViewModeRight ) ? CGPDFPageRetain([_dataSource page]) :  CGPDFPageRetain([_dataSource pageWithOffset:-1]) ;
+	{    
+    if ( mode_ == GFRenderTiledViewModeLeft )
+    {
+      drawPageRef = CGPDFPageRetain((rotated_) ? [_dataSource pageWithOffset:-1] : [_dataSource page]);
+      NSLog(@"Drawin layer for left page!");
+    }
+    else
+    {
+
+      drawPageRef = CGPDFPageRetain([_dataSource page]);
+      NSLog(@"Drawin layer for right page!");
+    }
 	}
   
-	CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f); // White
+  CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f); // White
   
 	CGContextFillRect(context, CGContextGetClipBoundingBox(context));
   
-	if (drawPDFPageRef != NULL) // Render the page into the context
+  // Drawin left page
+  if (drawPageRef != NULL) // Render the page into the context
 	{
+
+    NSLog(@"Draw layer: %fx%f | %@", self.bounds.size.width, self.bounds.size.height, ( mode_ == GFRenderTiledViewModeLeft ) ? @"Left" : @"Right");
+
 		CGFloat boundsHeight = self.bounds.size.height;
     
-		if (CGPDFPageGetRotationAngle(drawPDFPageRef) == 0)
+		if (CGPDFPageGetRotationAngle(drawPageRef) == 0)
 		{
 			CGFloat boundsWidth = self.bounds.size.width; // View width
       
-			CGRect cropBoxRect = CGPDFPageGetBoxRect(drawPDFPageRef, kCGPDFCropBox);
-			CGRect mediaBoxRect = CGPDFPageGetBoxRect(drawPDFPageRef, kCGPDFMediaBox);
+			CGRect cropBoxRect = CGPDFPageGetBoxRect(drawPageRef, kCGPDFCropBox);
+			CGRect mediaBoxRect = CGPDFPageGetBoxRect(drawPageRef, kCGPDFMediaBox);
 			CGRect effectiveRect = CGRectIntersection(cropBoxRect, mediaBoxRect);
       
 			CGFloat effectiveWidth = effectiveRect.size.width;
 			CGFloat effectiveHeight = effectiveRect.size.height;
+      
+      NSLog(@"Drawin | Effective rect: %fx%f (%f, %f)", effectiveWidth, effectiveHeight, effectiveRect.origin.x, effectiveRect.origin.y);
       
 			CGFloat widthScale = (boundsWidth / effectiveWidth);
 			CGFloat heightScale = (boundsHeight / effectiveHeight);
@@ -84,10 +99,15 @@
 			CGFloat x_offset = ((boundsWidth - (effectiveWidth * scale)) / 2.0f);
 			CGFloat y_offset = ((boundsHeight - (effectiveHeight * scale)) / 2.0f);
       
+//      if ( mode_ == GFRenderTiledViewModeRight )
+//        x_offset += boundsWidth;
+      
 			y_offset = (boundsHeight - y_offset); // Co-ordinate system adjust
       
 			CGFloat x_translate = (x_offset - (effectiveRect.origin.x * scale));
 			CGFloat y_translate = (y_offset + (effectiveRect.origin.y * scale));
+      
+      NSLog(@"Drawin | scale = %f | at point: (%f, %f) | Translate coord: (%f, %f)", scale, x_offset, y_offset, x_translate, y_translate);
       
 			CGContextTranslateCTM(context, x_translate, y_translate);
       
@@ -97,15 +117,15 @@
 		{
 			CGContextTranslateCTM(context, 0.0f, boundsHeight); CGContextScaleCTM(context, 1.0f, -1.0f);
       
-			CGContextConcatCTM(context, CGPDFPageGetDrawingTransform(drawPDFPageRef, kCGPDFCropBox, self.bounds, 0, true));
+			CGContextConcatCTM(context, CGPDFPageGetDrawingTransform(drawPageRef, kCGPDFCropBox, self.bounds, 0, true));
 		}
     
-		CGContextDrawPDFPage(context, drawPDFPageRef);
+    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+    CGContextSetRenderingIntent(context, kCGRenderingIntentDefault);
+		CGContextDrawPDFPage(context, drawPageRef);
 	}
   
-	CGPDFPageRelease(drawPDFPageRef); // Cleanup
-  
-	CGPDFDocumentRelease(drawPDFDocRef);
+  CGPDFPageRelease(drawPageRef);
 }
 
 - (void)reloadData

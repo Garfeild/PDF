@@ -9,21 +9,23 @@
 #import <UIKit/UIKit.h>
 #import "GFRenderProtocols.h"
 
-typedef enum {
-  GFTiledRenderViewModeRight = 0,
-  GFTiledRenderViewModeLeft,
-} GFTiledRenderViewMode;
+typedef enum
+{
+  GFRenderTiledViewModeLeft = 0,
+  GFRenderTiledViewModeRight,
+} GFRenderTiledViewMode;
 
 @interface GFRenderTiledView : UIView {
   
   id <GFPDFRenderDataSource> _dataSource;
-  
-  GFTiledRenderViewMode mode_;
+  GFRenderTiledViewMode mode_;
+  BOOL rotated_;
     
 }
 
 @property (assign) id<GFPDFRenderDataSource> dataSource;
-@property (assign) GFTiledRenderViewMode mode;
+@property (assign) GFRenderTiledViewMode mode;
+@property (assign) BOOL rotated;
 
 - (void)reloadData;
 

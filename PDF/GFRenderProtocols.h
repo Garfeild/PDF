@@ -23,7 +23,7 @@
 
 @optional
 - (void)beginZoom;
-
+- (void)setCurrentIndex:(NSInteger)currentIndex;
 @end
 
 @protocol GFPDFRenderDataSource <NSObject>

@@ -29,6 +29,8 @@
   
   BOOL zooming_;
   
+  BOOL rotating_;
+  
   UIPinchGestureRecognizer *_pinch;
 
 }

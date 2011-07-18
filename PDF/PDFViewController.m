@@ -15,6 +15,11 @@
 #define MINIMUM_ZOOM_SCALE 1.0f
 #define MAXIMUM_ZOOM_SCALE 5.0f
 
+@interface PDFViewController (Workers)
+- (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation;
+@end
+
+
 @implementation PDFViewController
 
 #pragma mark - View lifecycle
@@ -67,7 +72,7 @@
   
   [self createToolBar];
   
-  _scrollView =[[UIScrollView alloc] initWithFrame:CGRectMake(0,
+  _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0,
                                                               _toolBar.frame.size.height, 
                                                               self.view.frame.size.width,
                                                               self.view.frame.size.height - _toolBar.frame.size.height)];
@@ -83,33 +88,24 @@
 	_scrollView.delegate = self;
   [self.view addSubview:_scrollView];
   
+  NSLog(@"_scrollView bounds: %fx%f (%f, %f)", _scrollView.frame.size.width, _scrollView.frame.size.height, _scrollView.frame.origin.x, _scrollView.frame.origin.y);
+  
   _hostView = [[UIView alloc] initWithFrame:_scrollView.bounds];
   _hostView.autoresizesSubviews = NO;
-  _hostView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+	_hostView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   [_scrollView addSubview:_hostView];
-               
-  _leftTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
-  _leftTiledRenderView.dataSource = self;
-  _leftTiledRenderView.hidden = YES;
-  _leftTiledRenderView.mode = GFTiledRenderViewModeLeft;
-  [_hostView addSubview:_leftTiledRenderView];
   
-  _rightTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
+  _rightTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:CGRectMake(0, 0, _scrollView.bounds.size.width/2, _scrollView.bounds.size.height)];
   _rightTiledRenderView.dataSource = self;
+  _rightTiledRenderView.mode = GFRenderTiledViewModeRight;
+  _rightTiledRenderView.hidden = NO;
   [_hostView addSubview:_rightTiledRenderView];
   
-  if ( UIInterfaceOrientationIsPortrait(self.interfaceOrientation) )
-  {
-    _leftTiledRenderView.hidden = NO; 
-    _leftTiledRenderView.frame = CGRectMake(0, 
-                                            0, 
-                                            _scrollView.frame.size.width/2, 
-                                            _scrollView.frame.size.height);
-    _leftTiledRenderView.frame = CGRectMake(_leftTiledRenderView.frame.size.width, 
-                                            0, 
-                                            _leftTiledRenderView.frame.size.width, 
-                                            _leftTiledRenderView.frame.size.height); 
-  }
+  _leftTiledRenderView = [[GFRenderTiledView alloc] initWithFrame:_scrollView.bounds];
+  _leftTiledRenderView.dataSource = self;
+  _leftTiledRenderView.mode = GFRenderTiledViewModeLeft;
+  _leftTiledRenderView.rotated = UIInterfaceOrientationIsLandscape(self.interfaceOrientation);
+  [_hostView addSubview:_leftTiledRenderView];
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -118,8 +114,6 @@
                                  self.view.frame.size.height - _toolBar.frame.size.height);
   
   [self.view bringSubviewToFront:_renderView];
-  
-  zooming_ = NO;
 
   [self addPinchRegonizer];
   
@@ -130,7 +124,10 @@
   tapGesture.numberOfTapsRequired = 2; // One finger double tap
 	[self.view addGestureRecognizer:tapGesture]; 
   [tapGesture release];
-
+  
+  zooming_ = NO;
+  
+  rotating_ = NO;
 }
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
@@ -145,9 +142,8 @@
       
   [super viewDidLoad];
   
-  [_rightTiledRenderView reloadData];
   [_leftTiledRenderView reloadData];
-
+  [_rightTiledRenderView reloadData];
 }
 
 
@@ -164,6 +160,8 @@
 	CGAffineTransform transform = aspectFit(CGPDFPageGetBoxRect(page, kCGPDFMediaBox),
                                           CGContextGetClipBoundingBox(context));
 	CGContextConcatCTM(context, transform);
+  CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
+  CGContextSetRenderingIntent(context, kCGRenderingIntentDefault);
 	CGContextDrawPDFPage(context, page);
 }
 
@@ -177,18 +175,20 @@
   return _pdf;
 }
 
-- (CGPDFPageRef)page
-{
-  return CGPDFDocumentGetPage(_pdf, currentIndex_ + 1); 
-}
-
 - (CGPDFPageRef)pageAtIndex:(NSInteger)index
 {
+  NSLog(@"Returnin page at index: %d", index);
   return CGPDFDocumentGetPage(_pdf, index + 1); 
 }
 
-- (CGPDFPageRef)pageWithOffset:(NSInteger)offset {
-  return CGPDFDocumentGetPage(_pdf, currentIndex_ + offset + 1); 
+- (CGPDFPageRef)page
+{
+  return [self pageAtIndex:currentIndex_]; 
+}
+
+- (CGPDFPageRef)pageWithOffset:(NSInteger)offset 
+{
+  return [self pageAtIndex:currentIndex_ + offset]; 
 }
 
 - (void)switchViews:(BOOL)zoomin
@@ -216,7 +216,8 @@
       _renderView.lockedOtherView = NO;
     }
     
-    currentIndex_ = _renderView.currentItem = _renderView.currentItem+1;
+    _renderView.currentItem = _renderView.currentItem+1;
+    [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
 
   }
@@ -233,9 +234,9 @@
       _renderView.lockedOtherView = NO;
     }
 
-    currentIndex_ = _renderView.currentItem = _renderView.currentItem-1;
+    _renderView.currentItem = _renderView.currentItem-1;
+    [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
-
   }
 }
 
@@ -257,6 +258,12 @@
   [self switchViews:YES];
 
 }
+
+- (void)setCurrentIndex:(NSInteger)currentIndex
+{
+  currentIndex_ = currentIndex;
+}
+
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
@@ -316,27 +323,92 @@
 
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
   
+  NSLog(@"Will rotate");
+
+  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];  
+  
+  NSLog(@"Will | _hostView: %fx%f, (%f, %f)", _hostView.frame.size.width, _hostView.frame.size.height, _hostView.frame.origin.x, _hostView.frame.origin.y);
+ 
   [UIView animateWithDuration:duration animations:^(void) {
-    if ( UIInterfaceOrientationIsLandscape(toInterfaceOrientation) )
+    CGRect bounds = self.view.bounds;
+    CGFloat tmp = 0.f;
+    
+    tmp = bounds.size.height;
+    bounds.size.height = bounds.size.width-44.f;
+    bounds.size.width = tmp;
+    
+    if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
     {
-      _leftTiledRenderView.hidden = YES;
-      _rightTiledRenderView.frame = _scrollView.bounds;
+      _rightTiledRenderView.hidden = YES;
+      _leftTiledRenderView.rotated = NO;
+      
     }
     else
     {
-      NSLog(@"_scrollView frame: %fx%f", _scrollView.frame.size.width, _scrollView.frame.size.height);
-      _leftTiledRenderView.hidden = NO; 
-      _leftTiledRenderView.frame = CGRectMake(0, 
-                                              0, 
-                                              _scrollView.frame.size.width/2, 
-                                              _scrollView.frame.size.height);
-      _leftTiledRenderView.frame = CGRectMake(_leftTiledRenderView.frame.size.width, 
-                                              0, 
-                                              _leftTiledRenderView.frame.size.width, 
-                                              _leftTiledRenderView.frame.size.height);
+      _rightTiledRenderView.hidden = NO;
+      _leftTiledRenderView.rotated = YES;
+      bounds.size.width /=2;
     }
+
+    
+    
+    _leftTiledRenderView.frame = bounds;
+    bounds.origin.x += bounds.size.width;
+    _rightTiledRenderView.frame = bounds;
+    
+  } completion:^(BOOL finished) {
+    [_leftTiledRenderView reloadData];
+    [_rightTiledRenderView reloadData];
   }];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+  NSLog(@"Did! | _hostView: %fx%f, (%f, %f)", _hostView.frame.size.width, _hostView.frame.size.height, _hostView.frame.origin.x, _hostView.frame.origin.y);
+
+//  rotating_ = YES;
+//  
+//  
+//  [self updateTiledViewsFrames:self.interfaceOrientation];
+//  
+//  [_leftTiledRenderView reloadData];
+//  [_rightTiledRenderView reloadData];
+//  rotating_ = NO;
+}
+
+
+- (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation
+{
+  CGRect bounds = _scrollView.bounds;
+//  if ( rotating_ )
+//  {
+//    CGFloat tmp = bounds.size.width;
+//    bounds.size.width = bounds.size.height;
+//    bounds.size.height = tmp;
+//  }
+  
+  bounds.size.height -= 64.f;
+  _scrollView.contentSize = bounds.size;
+  _scrollView.frame = bounds;
+  _scrollView.center = CGPointMake(_scrollView.center.x, self.view.bounds.size.height/2+32.f);
+  NSLog(@"New rect: %fx%f (%f, %f)", bounds.size.width, bounds.size.height, bounds.origin.x, bounds.origin.y);
+
+  if ( UIInterfaceOrientationIsPortrait(interfaceOrientation) )
+  {
+    _rightTiledRenderView.hidden = YES;
+    _leftTiledRenderView.rotated = NO;
+
+  }
+  else
+  {
+    _rightTiledRenderView.hidden = NO;
+    _leftTiledRenderView.rotated = YES;
+    bounds.size.width /=2;
+  }
+  
+  _leftTiledRenderView.frame = bounds;
+  bounds.origin.x += bounds.size.width;
+  _rightTiledRenderView.frame = bounds;
 }
 @end

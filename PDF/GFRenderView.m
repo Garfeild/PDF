@@ -218,6 +218,8 @@ CGFloat distance(CGPoint a, CGPoint b);
   if ( renderViewMode_ == GFRenderViewModeFacingPages && currentItem % 2 != 0)
     currentItem_ += 1;
 	
+  [_delegate setCurrentIndex:currentItem_];
+  
 	[CATransaction begin];
 	[CATransaction setValue:(id)kCFBooleanTrue
                    forKey:kCATransactionDisableActions];
@@ -351,6 +353,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 - (void)didTurnPageBackward 
 {
 	animationIsRunning_ = NO;
+  self.currentItem = self.currentItem;
 }
 
 - (void)didTurnPageForward 
