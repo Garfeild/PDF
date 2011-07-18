@@ -22,7 +22,7 @@
 
 - (CGImageRef)itemForIndex:(NSInteger)index dataSource:(id<GFRenderDataSource>)dataSource;
 
-- (void)minimizeItems:(NSInteger)currentIndex;
+- (void)minimizeItems:(NSInteger)currentIndex dataSource:(id<GFRenderDataSource>)dataSource;
 
 @end
 

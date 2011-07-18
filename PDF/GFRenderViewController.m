@@ -48,6 +48,12 @@
   [super dealloc];
 }
 
+- (void)didReceiveMemoryWarning
+{
+  [super didReceiveMemoryWarning];
+  [[GFImageCache imageCache] minimizeItems:_renderView.currentItem dataSource:self];
+}
+
 #pragma mark - View lifecycle
 
 // Implement loadView to create a view hierarchy programmatically, without using a nib.

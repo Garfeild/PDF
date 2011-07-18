@@ -94,9 +94,23 @@ static GFImageCache *imageCache = nil;
 
 }
 
-- (void)minimizeItems:(NSInteger)currentIndex
+- (void)minimizeItems:(NSInteger)currentIndex dataSource:(id<GFRenderDataSource>)dataSource
 {
   
+  NSMutableArray *removeKeys = [[NSMutableArray alloc] initWithArray:[_cache allKeys]];
+  
+  for ( int i=0; i<6; i++ )
+  {
+    if ( i < 2 )
+      [removeKeys removeObjectIdenticalTo:[NSString stringWithFormat:@"%@ - %d - %.0fx%.0f", [dataSource fileName], currentIndex-i, pageSize_.width, pageSize_.height]];
+    else
+      [removeKeys removeObjectIdenticalTo:[NSString stringWithFormat:@"%@ - %d - %.0fx%.0f", [dataSource fileName], currentIndex+i-2, pageSize_.width, pageSize_.height]];
+  }
+  
+  NSLog(@"Will remove: %@", removeKeys);
+  
+  [_cache removeObjectsForKeys:removeKeys];
+
 }
 
 @end
