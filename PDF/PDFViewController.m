@@ -408,7 +408,8 @@
 - (void)goToPageAtIndex:(NSInteger)index
 {
   _renderView.currentItem = index;
-  [_popOver dismissPopoverAnimated:YES];
+  if ( [_popOver isPopoverVisible] )
+    [_popOver dismissPopoverAnimated:YES];
 }
 
 @end
