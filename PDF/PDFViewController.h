@@ -11,6 +11,8 @@
 #import "GFRenderTiledView.h"
 #import "GFRenderViewController.h"
 
+@class ContentViewController;
+
 @interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate> {
   CGPDFDocumentRef _pdf;
   
@@ -32,6 +34,10 @@
   BOOL rotating_;
   
   UIPinchGestureRecognizer *_pinch;
+  
+  UIBarButtonItem *_contentButton;
+  
+  ContentViewController *_contentViewController;
 
 }
 

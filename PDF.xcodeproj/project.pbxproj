@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */; };
 		4A72237F13CA0A5D00F99C33 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72237E13CA0A5D00F99C33 /* UIKit.framework */; };
 		4A72238113CA0A5D00F99C33 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72238013CA0A5D00F99C33 /* Foundation.framework */; };
 		4A72238313CA0A5D00F99C33 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72238213CA0A5D00F99C33 /* CoreGraphics.framework */; };
@@ -26,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentViewController.h; sourceTree = "<group>"; };
+		4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentViewController.m; sourceTree = "<group>"; };
 		4A72237A13CA0A5D00F99C33 /* PDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A72237E13CA0A5D00F99C33 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4A72238013CA0A5D00F99C33 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -122,6 +125,8 @@
 				4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */,
 				4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */,
 				4A7223C113CA375D00F99C33 /* Test.pdf */,
+				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
+				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
 			);
 			path = PDF;
 			sourceTree = "<group>";
@@ -206,6 +211,7 @@
 				4A7223C513CA3D6F00F99C33 /* GFRenderViewController.m in Sources */,
 				4AF5A89813CCE98C00FD60F3 /* GFPDFTiledLayer.m in Sources */,
 				4AF5A89C13CCE9EA00FD60F3 /* GFRenderTiledView.m in Sources */,
+				4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

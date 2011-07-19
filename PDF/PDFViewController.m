@@ -17,12 +17,26 @@
 
 @interface PDFViewController (Workers)
 - (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation;
+- (void)clearMemory;
+- (void)showContent;
 @end
 
 
 @implementation PDFViewController
 
 #pragma mark - View lifecycle
+
+- (void)clearMemory
+{
+  [[GFImageCache imageCache] minimizeItems:currentIndex_ dataSource:self];
+}
+
+- (void)showContent
+{
+  UIPopoverController *content = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
+  [content presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  
+}
 
 - (void)addPinchRegonizer
 {
@@ -52,6 +66,15 @@
   [button release];
 
   button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStylePlain target:self action:@selector(showContent)];
+  [items addObject:button];
+  _contentButton = button;
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
   [items addObject:button];
   [button release];
   
