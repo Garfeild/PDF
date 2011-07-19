@@ -9,6 +9,7 @@
 #import "PDFViewController.h"
 #import "GFHelpers.h"
 #import "GFImageCache.h"
+#import "ContentViewController.h"
 
 #define ZOOM_AMOUNT 0.25f
 #define NO_ZOOM_SCALE 1.0f
@@ -147,7 +148,7 @@
   tapGesture.numberOfTapsRequired = 2; // One finger double tap
 	[self.view addGestureRecognizer:tapGesture]; 
   [tapGesture release];
-  
+    
   zooming_ = NO;
   
   rotating_ = NO;
@@ -160,7 +161,9 @@
   NSURL *fileURL = [NSURL fileURLWithPath:path];
   
   _pdf = CGPDFDocumentCreateWithURL((CFURLRef)fileURL);
-  
+
+  _contentViewController = [[ContentViewController alloc] initWithPDF:_pdf];
+
   _fileName = [[NSString alloc] initWithString:@"Test"];
       
   [super viewDidLoad];

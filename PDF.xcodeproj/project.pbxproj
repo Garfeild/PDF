@@ -55,7 +55,7 @@
 		4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderViewController.m; sourceTree = "<group>"; };
 		4AF5A89613CCE98C00FD60F3 /* GFPDFTiledLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFPDFTiledLayer.h; sourceTree = "<group>"; };
 		4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFPDFTiledLayer.m; sourceTree = "<group>"; };
-		4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */ = {isa = PBXFileReference; fileEncoding = 4; path = GFRenderTiledView.h; sourceTree = "<group>"; };
+		4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GFRenderTiledView.h; sourceTree = "<group>"; };
 		4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GFRenderTiledView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
