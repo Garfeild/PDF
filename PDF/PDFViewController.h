@@ -10,10 +10,9 @@
 #import "GFRenderView.h"
 #import "GFRenderTiledView.h"
 #import "GFRenderViewController.h"
+#import "ContentViewController.h"
 
-@class ContentViewController;
-
-@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate> {
+@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate, ContentViewControllerDelegate> {
   CGPDFDocumentRef _pdf;
   
   NSString *_fileName;
@@ -38,6 +37,8 @@
   UIBarButtonItem *_contentButton;
   
   ContentViewController *_contentViewController;
+  
+  UIPopoverController *_popOver;
 
 }
 

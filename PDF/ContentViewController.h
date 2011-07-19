@@ -9,12 +9,25 @@
 #import <UIKit/UIKit.h>
 @class ContentDataSource;
 
+@protocol ContentViewControllerDelegate <NSObject>
+
+@required
+- (void)goToPageAtIndex:(NSInteger)index;
+
+@end
+
 @interface ContentViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>  {
  
   UITableView *_tableView;
-  CGPDFDocumentRef _pdf;
+    
+  NSArray *_items;
+  
+  NSDictionary *_links;
+  
+  id<ContentViewControllerDelegate> _delegate;
   
 }
+@property (assign) id<ContentViewControllerDelegate> delegate;
 
 - (id)initWithPDF:(CGPDFDocumentRef)pdfRef;
 

@@ -34,8 +34,8 @@
 
 - (void)showContent
 {
-  UIPopoverController *content = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
-  [content presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
+  [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
   
 }
 
@@ -162,14 +162,20 @@
   
   _pdf = CGPDFDocumentCreateWithURL((CFURLRef)fileURL);
 
-  _contentViewController = [[ContentViewController alloc] initWithPDF:_pdf];
-
   _fileName = [[NSString alloc] initWithString:@"Test"];
       
   [super viewDidLoad];
   
   [_leftTiledRenderView reloadData];
   [_rightTiledRenderView reloadData];
+  
+  _contentViewController = [[ContentViewController alloc] initWithPDF:_pdf];
+  [_contentViewController setDelegate:self];
+  
+  CGSize size = self.view.bounds.size;
+  size.width = 320.f;
+  size.height -= 100.f;
+  _contentViewController.contentSizeForViewInPopover = size;
 }
 
 
@@ -389,6 +395,20 @@
     [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
   }];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+  CGSize size = self.view.bounds.size;
+  size.width = 320.f;
+  size.height -= 100.f;
+  _contentViewController.contentSizeForViewInPopover = size;
+}
+
+- (void)goToPageAtIndex:(NSInteger)index
+{
+  _renderView.currentItem = index;
+  [_popOver dismissPopoverAnimated:YES];
 }
 
 @end

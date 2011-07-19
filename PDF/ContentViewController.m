@@ -11,6 +11,23 @@
 
 @implementation ContentViewController
 
+@synthesize delegate = _delegate;
+
+// Method to build table of contents
+- (void)buildTableOfContents:(CGPDFDocumentRef)pdfRef
+{
+  /* In this method _items array should be populated with data from pdfRef */
+  
+  /* Dummy data */
+  _items = [[NSArray alloc] initWithObjects:
+            nil];
+  
+  NSArray *links = [[NSArray alloc] initWithObjects:
+                    nil];
+  
+  _links = [[NSDictionary alloc] initWithObjects:links forKeys:_items];
+}
+
 - (id)initWithPDF:(CGPDFDocumentRef)pdfRef
 {
   
@@ -18,7 +35,7 @@
   
   if ( self != nil )
   {
-    _pdf = CGPDFDocumentRetain(pdfRef);
+    [self buildTableOfContents:pdfRef];
   }
   
   return self;
@@ -51,38 +68,11 @@
   
 }
 
-void ListDictionaryObjects (const char *key, CGPDFObjectRef object, void *info) {
-  NSLog(@"key: %s", key);
-  CGPDFObjectType type = CGPDFObjectGetType(object);
-  switch (type) { 
-    case kCGPDFObjectTypeDictionary: {
-      CGPDFDictionaryRef objectDictionary;
-      if (CGPDFObjectGetValue(object, kCGPDFObjectTypeDictionary, &objectDictionary)) {
-        CGPDFDictionaryApplyFunction(objectDictionary, ListDictionaryObjects, NULL);
-      }
-    }
-    case kCGPDFObjectTypeInteger: {
-      CGPDFInteger objectInteger;
-      if (CGPDFObjectGetValue(object, kCGPDFObjectTypeInteger, &objectInteger)) {
-        NSLog(@"pdf integer value: %ld", (long int)objectInteger); 
-      }
-    }
-      // test other object type cases here
-      // cf. http://developer.apple.com/mac/library/documentation/GraphicsImaging/Reference/CGPDFObject/Reference/reference.html#//apple_ref/doc/uid/TP30001117-CH3g-SW1
-  }
-}
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
   [super viewDidLoad];
   [_tableView reloadData];
-  
-  self.contentSizeForViewInPopover = CGSizeMake(160.f, 320.f);
-  
-  CGPDFDictionaryRef pdfDocDictionary = CGPDFDocumentGetCatalog(_pdf);
-  // loop through dictionary...
-  CGPDFDictionaryApplyFunction(pdfDocDictionary, ListDictionaryObjects, NULL);
 
 }
 
@@ -101,7 +91,7 @@ void ListDictionaryObjects (const char *key, CGPDFObjectRef object, void *info) 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return 0;
+  return [_items count];
 }
 
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -115,7 +105,16 @@ void ListDictionaryObjects (const char *key, CGPDFObjectRef object, void *info) 
     cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identificator];
   }
   
+  cell.textLabel.text = [_items objectAtIndex:indexPath.row];
+  
   return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+  if ( _delegate != nil && [_delegate respondsToSelector:@selector(goToPageAtIndex:)] )
+    [_delegate goToPageAtIndex:[[_links objectForKey:[_items objectAtIndex:indexPath.row]] intValue]-1];
+  [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 @end
