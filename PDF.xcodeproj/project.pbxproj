@@ -216,8 +216,6 @@
 		4A06562913D75EA8007CDE7A /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
-				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
 				4A1B8D3113D714B90019FE30 /* SearchViewController.h */,
 				4A1B8D3213D714B90019FE30 /* SearchViewController.m */,
 				4A1B8D3313D714B90019FE30 /* SearchViewController.xib */,
@@ -267,6 +265,7 @@
 		4A72238413CA0A5D00F99C33 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
+				4A9CDCE113D7616E00AD3816 /* Content */,
 				4A06562913D75EA8007CDE7A /* Search */,
 				4A06562713D75E80007CDE7A /* PDF Rendering */,
 				4A72238513CA0A5D00F99C33 /* Supporting Files */,
@@ -285,6 +284,15 @@
 				4A72238B13CA0A5E00F99C33 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4A9CDCE113D7616E00AD3816 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
+				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
+			);
+			name = Content;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

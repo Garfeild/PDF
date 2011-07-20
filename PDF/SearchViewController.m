@@ -43,7 +43,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
   _tableViewController = [[SearchTableViewController alloc] initWithNibName:@"SearchTableViewController" bundle:nil];
-  _tableViewController.contentSizeForViewInPopover = CGSizeMake(120, 600);
+  _tableViewController.contentSizeForViewInPopover = CGSizeMake(320, 640);
   
   _renderViewController = [[SearchPDFPageViewController alloc] init];
   
@@ -53,14 +53,21 @@
                   nil];
   
   _splitViewController = [[UISplitViewController alloc] init];
-  _splitViewController.delegate = self;
   _splitViewController.view.frame = CGRectMake(0, _toolBar.frame.size.height, self.view.frame.size.width, self.view.frame.size.height-_toolBar.frame.size.height);
   _splitViewController.viewControllers = vcs;
   [vcs release];
   
+  _popOver = [[UIPopoverController alloc] initWithContentViewController:_tableViewController];
+  _popOver.delegate = self;
+  
+  _resultsButton = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStyleBordered target:self action:@selector(showResults:)];
+  
   [self.view addSubview:_splitViewController.view];
   
   [self.view bringSubviewToFront:_toolBar];
+  
+  onScreen_ = NO;
+
 }
 
 - (void)viewDidUnload
@@ -70,10 +77,60 @@
     // e.g. self.myOutlet = nil;
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+  NSLog(@"Appear");
+  [super viewDidAppear:animated];
+
+  NSMutableArray *items = [[_toolBar items] mutableCopy];
+  if ( UIInterfaceOrientationIsPortrait(self.interfaceOrientation) )
+  {
+    [items insertObject:_resultsButton atIndex:0];
+  }
+  else
+  {
+    [items removeObject:_resultsButton]; 
+  }
+  [_toolBar setItems:items];
+  [items release];
+  
+  onScreen_ = YES;
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-	return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+//	return UIInterfaceOrientationIsLandscape(interfaceOrientation);
+  return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+  NSLog(@"Will Rotate");
+  if ( UIInterfaceOrientationIsLandscape(toInterfaceOrientation) && _popOver != nil && [_popOver isPopoverVisible] )
+    [_popOver dismissPopoverAnimated:YES];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+  NSLog(@"Did rotate");
+  
+  if ( onScreen_ )
+  {
+    NSMutableArray *items = [[_toolBar items] mutableCopy];
+    
+    if ( UIInterfaceOrientationIsPortrait(fromInterfaceOrientation) )
+    {
+      [items removeObject:_resultsButton]; 
+    }
+    else
+    {
+      [items insertObject:_resultsButton atIndex:0];
+    }
+    
+    [_toolBar setItems:items];
+    [items release];
+  }
 }
 
 - (IBAction)dismiss:(id)sender
@@ -84,21 +141,15 @@
   [self.parentViewController dismissModalViewControllerAnimated:YES];
 }
 
-- (void)splitViewController:(UISplitViewController *)svc willHideViewController:(UIViewController *)aViewController withBarButtonItem:(UIBarButtonItem *)barButtonItem forPopoverController:(UIPopoverController *)pc
+- (IBAction)showResults:(id)sender
 {
-  NSMutableArray *items = [[_toolBar items] mutableCopy];
-  [items insertObject:barButtonItem atIndex:0];
-  NSLog(@"Items count: %d", [items count]);
-  [_toolBar setItems:items animated:YES];
-  [items release];
-}
-
-- (void)splitViewController:(UISplitViewController *)svc willShowViewController:(UIViewController *)aViewController invalidatingBarButtonItem:(UIBarButtonItem *)barButtonItem
-{
-  NSMutableArray *items = [[_toolBar items] mutableCopy];
-  [items removeObjectAtIndex:0];
-  [_toolBar setItems:items animated:YES];
-  [items release];
+  if ( _popOver != nil )
+  {
+    if ( ![_popOver isPopoverVisible] )
+      [_popOver presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    else
+      [_popOver dismissPopoverAnimated:YES];
+  }
 }
 
 @end

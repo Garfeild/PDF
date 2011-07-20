@@ -37,7 +37,7 @@
 @end
 
 
-@interface SearchViewController : UIViewController <UISplitViewControllerDelegate> {
+@interface SearchViewController : UIViewController <UIPopoverControllerDelegate> {
   
   SearchTableViewController *_tableViewController;
   
@@ -45,16 +45,24 @@
   
   UISplitViewController *_splitViewController;
   
+  UIPopoverController  *_popOver;
+  
   UIToolbar *_toolBar;
+  
+  UIBarButtonItem *_resultsButton;
   
   id<SearchViewControllerDelegate> _delegate;
   
   NSInteger selectedPage_;
+  
+  BOOL onScreen_;
   
 }
 @property (assign) id<SearchViewControllerDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UIToolbar *toolBar;
 
 - (IBAction)dismiss:(id)sender;
+
+- (IBAction)showResults:(id)sender;
 
 @end
