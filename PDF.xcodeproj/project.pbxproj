@@ -8,6 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		4A0655C013D73C5D007CDE7A /* SearchTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */; };
+		4A06560E13D75D6D007CDE7A /* CIDType0Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655ED13D75D6D007CDE7A /* CIDType0Font.m */; };
+		4A06560F13D75D6D007CDE7A /* CIDType2Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655EF13D75D6D007CDE7A /* CIDType2Font.m */; };
+		4A06561013D75D6D007CDE7A /* CMap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655F113D75D6D007CDE7A /* CMap.m */; };
+		4A06561113D75D6D007CDE7A /* CompositeFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655F313D75D6D007CDE7A /* CompositeFont.m */; };
+		4A06561213D75D6D007CDE7A /* Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655F513D75D6D007CDE7A /* Font.m */; };
+		4A06561313D75D6D007CDE7A /* FontCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655F713D75D6D007CDE7A /* FontCollection.m */; };
+		4A06561413D75D6D007CDE7A /* FontDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655F913D75D6D007CDE7A /* FontDescriptor.m */; };
+		4A06561513D75D6D007CDE7A /* MMType1Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655FB13D75D6D007CDE7A /* MMType1Font.m */; };
+		4A06561613D75D6D007CDE7A /* RenderingState.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655FD13D75D6D007CDE7A /* RenderingState.m */; };
+		4A06561713D75D6D007CDE7A /* Scanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A0655FF13D75D6D007CDE7A /* Scanner.m */; };
+		4A06561813D75D6D007CDE7A /* Selection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560113D75D6D007CDE7A /* Selection.m */; };
+		4A06561913D75D6D007CDE7A /* SimpleFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560313D75D6D007CDE7A /* SimpleFont.m */; };
+		4A06561A13D75D6D007CDE7A /* StringDetector.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560513D75D6D007CDE7A /* StringDetector.m */; };
+		4A06561B13D75D6D007CDE7A /* TrueTypeFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560713D75D6D007CDE7A /* TrueTypeFont.m */; };
+		4A06561C13D75D6D007CDE7A /* Type0Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560913D75D6D007CDE7A /* Type0Font.m */; };
+		4A06561D13D75D6D007CDE7A /* Type1Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560B13D75D6D007CDE7A /* Type1Font.m */; };
+		4A06561E13D75D6D007CDE7A /* Type3Font.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A06560D13D75D6D007CDE7A /* Type3Font.m */; };
 		4A1B8D3413D714B90019FE30 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3213D714B90019FE30 /* SearchViewController.m */; };
 		4A1B8D3513D714B90019FE30 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3313D714B90019FE30 /* SearchViewController.xib */; };
 		4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */; };
@@ -31,6 +48,40 @@
 
 /* Begin PBXFileReference section */
 		4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchTableViewController.xib; sourceTree = "<group>"; };
+		4A0655EC13D75D6D007CDE7A /* CIDType0Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIDType0Font.h; sourceTree = "<group>"; };
+		4A0655ED13D75D6D007CDE7A /* CIDType0Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CIDType0Font.m; sourceTree = "<group>"; };
+		4A0655EE13D75D6D007CDE7A /* CIDType2Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CIDType2Font.h; sourceTree = "<group>"; };
+		4A0655EF13D75D6D007CDE7A /* CIDType2Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CIDType2Font.m; sourceTree = "<group>"; };
+		4A0655F013D75D6D007CDE7A /* CMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMap.h; sourceTree = "<group>"; };
+		4A0655F113D75D6D007CDE7A /* CMap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMap.m; sourceTree = "<group>"; };
+		4A0655F213D75D6D007CDE7A /* CompositeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositeFont.h; sourceTree = "<group>"; };
+		4A0655F313D75D6D007CDE7A /* CompositeFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CompositeFont.m; sourceTree = "<group>"; };
+		4A0655F413D75D6D007CDE7A /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
+		4A0655F513D75D6D007CDE7A /* Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Font.m; sourceTree = "<group>"; };
+		4A0655F613D75D6D007CDE7A /* FontCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontCollection.h; sourceTree = "<group>"; };
+		4A0655F713D75D6D007CDE7A /* FontCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontCollection.m; sourceTree = "<group>"; };
+		4A0655F813D75D6D007CDE7A /* FontDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontDescriptor.h; sourceTree = "<group>"; };
+		4A0655F913D75D6D007CDE7A /* FontDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FontDescriptor.m; sourceTree = "<group>"; };
+		4A0655FA13D75D6D007CDE7A /* MMType1Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MMType1Font.h; sourceTree = "<group>"; };
+		4A0655FB13D75D6D007CDE7A /* MMType1Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MMType1Font.m; sourceTree = "<group>"; };
+		4A0655FC13D75D6D007CDE7A /* RenderingState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderingState.h; sourceTree = "<group>"; };
+		4A0655FD13D75D6D007CDE7A /* RenderingState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenderingState.m; sourceTree = "<group>"; };
+		4A0655FE13D75D6D007CDE7A /* Scanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scanner.h; sourceTree = "<group>"; };
+		4A0655FF13D75D6D007CDE7A /* Scanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Scanner.m; sourceTree = "<group>"; };
+		4A06560013D75D6D007CDE7A /* Selection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Selection.h; sourceTree = "<group>"; };
+		4A06560113D75D6D007CDE7A /* Selection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Selection.m; sourceTree = "<group>"; };
+		4A06560213D75D6D007CDE7A /* SimpleFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleFont.h; sourceTree = "<group>"; };
+		4A06560313D75D6D007CDE7A /* SimpleFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleFont.m; sourceTree = "<group>"; };
+		4A06560413D75D6D007CDE7A /* StringDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringDetector.h; sourceTree = "<group>"; };
+		4A06560513D75D6D007CDE7A /* StringDetector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringDetector.m; sourceTree = "<group>"; };
+		4A06560613D75D6D007CDE7A /* TrueTypeFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrueTypeFont.h; sourceTree = "<group>"; };
+		4A06560713D75D6D007CDE7A /* TrueTypeFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TrueTypeFont.m; sourceTree = "<group>"; };
+		4A06560813D75D6D007CDE7A /* Type0Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Type0Font.h; sourceTree = "<group>"; };
+		4A06560913D75D6D007CDE7A /* Type0Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Type0Font.m; sourceTree = "<group>"; };
+		4A06560A13D75D6D007CDE7A /* Type1Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Type1Font.h; sourceTree = "<group>"; };
+		4A06560B13D75D6D007CDE7A /* Type1Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Type1Font.m; sourceTree = "<group>"; };
+		4A06560C13D75D6D007CDE7A /* Type3Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Type3Font.h; sourceTree = "<group>"; };
+		4A06560D13D75D6D007CDE7A /* Type3Font.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Type3Font.m; sourceTree = "<group>"; };
 		4A1B8D3113D714B90019FE30 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
 		4A1B8D3213D714B90019FE30 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
 		4A1B8D3313D714B90019FE30 /* SearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchViewController.xib; sourceTree = "<group>"; };
@@ -84,8 +135,104 @@
 		4A0655CF13D75682007CDE7A /* Libs */ = {
 			isa = PBXGroup;
 			children = (
+				4A0655EB13D75D6D007CDE7A /* PDFKitten */,
 			);
 			name = Libs;
+			sourceTree = "<group>";
+		};
+		4A0655EB13D75D6D007CDE7A /* PDFKitten */ = {
+			isa = PBXGroup;
+			children = (
+				4A0655EC13D75D6D007CDE7A /* CIDType0Font.h */,
+				4A0655ED13D75D6D007CDE7A /* CIDType0Font.m */,
+				4A0655EE13D75D6D007CDE7A /* CIDType2Font.h */,
+				4A0655EF13D75D6D007CDE7A /* CIDType2Font.m */,
+				4A0655F013D75D6D007CDE7A /* CMap.h */,
+				4A0655F113D75D6D007CDE7A /* CMap.m */,
+				4A0655F213D75D6D007CDE7A /* CompositeFont.h */,
+				4A0655F313D75D6D007CDE7A /* CompositeFont.m */,
+				4A0655F413D75D6D007CDE7A /* Font.h */,
+				4A0655F513D75D6D007CDE7A /* Font.m */,
+				4A0655F613D75D6D007CDE7A /* FontCollection.h */,
+				4A0655F713D75D6D007CDE7A /* FontCollection.m */,
+				4A0655F813D75D6D007CDE7A /* FontDescriptor.h */,
+				4A0655F913D75D6D007CDE7A /* FontDescriptor.m */,
+				4A0655FA13D75D6D007CDE7A /* MMType1Font.h */,
+				4A0655FB13D75D6D007CDE7A /* MMType1Font.m */,
+				4A0655FC13D75D6D007CDE7A /* RenderingState.h */,
+				4A0655FD13D75D6D007CDE7A /* RenderingState.m */,
+				4A0655FE13D75D6D007CDE7A /* Scanner.h */,
+				4A0655FF13D75D6D007CDE7A /* Scanner.m */,
+				4A06560013D75D6D007CDE7A /* Selection.h */,
+				4A06560113D75D6D007CDE7A /* Selection.m */,
+				4A06560213D75D6D007CDE7A /* SimpleFont.h */,
+				4A06560313D75D6D007CDE7A /* SimpleFont.m */,
+				4A06560413D75D6D007CDE7A /* StringDetector.h */,
+				4A06560513D75D6D007CDE7A /* StringDetector.m */,
+				4A06560613D75D6D007CDE7A /* TrueTypeFont.h */,
+				4A06560713D75D6D007CDE7A /* TrueTypeFont.m */,
+				4A06560813D75D6D007CDE7A /* Type0Font.h */,
+				4A06560913D75D6D007CDE7A /* Type0Font.m */,
+				4A06560A13D75D6D007CDE7A /* Type1Font.h */,
+				4A06560B13D75D6D007CDE7A /* Type1Font.m */,
+				4A06560C13D75D6D007CDE7A /* Type3Font.h */,
+				4A06560D13D75D6D007CDE7A /* Type3Font.m */,
+			);
+			name = PDFKitten;
+			path = Libs/PDFKitten/PDFKitten;
+			sourceTree = "<group>";
+		};
+		4A06562713D75E80007CDE7A /* PDF Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				4A7223B613CA366F00F99C33 /* GFHelpers.h */,
+				4A7223B713CA369400F99C33 /* GFHelpers.m */,
+				4A7223A713CA227900F99C33 /* GFImageCache.h */,
+				4A7223A813CA227900F99C33 /* GFImageCache.m */,
+				4A7223B513CA293A00F99C33 /* GFRenderProtocols.h */,
+				4A7223AA13CA228900F99C33 /* GFRenderView.h */,
+				4A7223AB13CA228900F99C33 /* GFRenderView.m */,
+				4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */,
+				4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */,
+				4AF5A89613CCE98C00FD60F3 /* GFPDFTiledLayer.h */,
+				4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */,
+				4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */,
+				4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */,
+			);
+			name = "PDF Rendering";
+			sourceTree = "<group>";
+		};
+		4A06562813D75E96007CDE7A /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				4A72238D13CA0A5E00F99C33 /* PDFAppDelegate.h */,
+				4A72238E13CA0A5E00F99C33 /* PDFAppDelegate.m */,
+				4A72239313CA0A5E00F99C33 /* PDFViewController.h */,
+				4A72239413CA0A5E00F99C33 /* PDFViewController.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		4A06562913D75EA8007CDE7A /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
+				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
+				4A1B8D3113D714B90019FE30 /* SearchViewController.h */,
+				4A1B8D3213D714B90019FE30 /* SearchViewController.m */,
+				4A1B8D3313D714B90019FE30 /* SearchViewController.xib */,
+				4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */,
+			);
+			name = Search;
+			sourceTree = "<group>";
+		};
+		4A06562A13D75EE0007CDE7A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4A72239013CA0A5E00F99C33 /* MainWindow.xib */,
+				4A7223C113CA375D00F99C33 /* Test.pdf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		4A72236F13CA0A5C00F99C33 = {
@@ -120,32 +267,11 @@
 		4A72238413CA0A5D00F99C33 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
-				4A72238D13CA0A5E00F99C33 /* PDFAppDelegate.h */,
-				4A72238E13CA0A5E00F99C33 /* PDFAppDelegate.m */,
-				4A72239013CA0A5E00F99C33 /* MainWindow.xib */,
-				4A72239313CA0A5E00F99C33 /* PDFViewController.h */,
-				4A72239413CA0A5E00F99C33 /* PDFViewController.m */,
+				4A06562913D75EA8007CDE7A /* Search */,
+				4A06562713D75E80007CDE7A /* PDF Rendering */,
 				4A72238513CA0A5D00F99C33 /* Supporting Files */,
-				4A7223A713CA227900F99C33 /* GFImageCache.h */,
-				4A7223A813CA227900F99C33 /* GFImageCache.m */,
-				4A7223B513CA293A00F99C33 /* GFRenderProtocols.h */,
-				4A7223AA13CA228900F99C33 /* GFRenderView.h */,
-				4A7223AB13CA228900F99C33 /* GFRenderView.m */,
-				4A7223B613CA366F00F99C33 /* GFHelpers.h */,
-				4A7223B713CA369400F99C33 /* GFHelpers.m */,
-				4A7223C313CA3D6D00F99C33 /* GFRenderViewController.h */,
-				4A7223C413CA3D6E00F99C33 /* GFRenderViewController.m */,
-				4AF5A89613CCE98C00FD60F3 /* GFPDFTiledLayer.h */,
-				4AF5A89713CCE98C00FD60F3 /* GFPDFTiledLayer.m */,
-				4AF5A89A13CCE9EA00FD60F3 /* GFRenderTiledView.h */,
-				4AF5A89B13CCE9EA00FD60F3 /* GFRenderTiledView.m */,
-				4A7223C113CA375D00F99C33 /* Test.pdf */,
-				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
-				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
-				4A1B8D3113D714B90019FE30 /* SearchViewController.h */,
-				4A1B8D3213D714B90019FE30 /* SearchViewController.m */,
-				4A1B8D3313D714B90019FE30 /* SearchViewController.xib */,
-				4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */,
+				4A06562A13D75EE0007CDE7A /* Resources */,
+				4A06562813D75E96007CDE7A /* Other Sources */,
 			);
 			path = PDF;
 			sourceTree = "<group>";
@@ -234,6 +360,23 @@
 				4AF5A89C13CCE9EA00FD60F3 /* GFRenderTiledView.m in Sources */,
 				4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */,
 				4A1B8D3413D714B90019FE30 /* SearchViewController.m in Sources */,
+				4A06560E13D75D6D007CDE7A /* CIDType0Font.m in Sources */,
+				4A06560F13D75D6D007CDE7A /* CIDType2Font.m in Sources */,
+				4A06561013D75D6D007CDE7A /* CMap.m in Sources */,
+				4A06561113D75D6D007CDE7A /* CompositeFont.m in Sources */,
+				4A06561213D75D6D007CDE7A /* Font.m in Sources */,
+				4A06561313D75D6D007CDE7A /* FontCollection.m in Sources */,
+				4A06561413D75D6D007CDE7A /* FontDescriptor.m in Sources */,
+				4A06561513D75D6D007CDE7A /* MMType1Font.m in Sources */,
+				4A06561613D75D6D007CDE7A /* RenderingState.m in Sources */,
+				4A06561713D75D6D007CDE7A /* Scanner.m in Sources */,
+				4A06561813D75D6D007CDE7A /* Selection.m in Sources */,
+				4A06561913D75D6D007CDE7A /* SimpleFont.m in Sources */,
+				4A06561A13D75D6D007CDE7A /* StringDetector.m in Sources */,
+				4A06561B13D75D6D007CDE7A /* TrueTypeFont.m in Sources */,
+				4A06561C13D75D6D007CDE7A /* Type0Font.m in Sources */,
+				4A06561D13D75D6D007CDE7A /* Type1Font.m in Sources */,
+				4A06561E13D75D6D007CDE7A /* Type3Font.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
