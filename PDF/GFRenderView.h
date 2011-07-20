@@ -35,8 +35,6 @@ typedef enum {
 	CALayer *_bottomLayer;
 	CAGradientLayer *_bottomLayerShadow;
   
-  NSArray *_selections;
-  
   NSInteger currentItem_;
   NSInteger numberOfItems_;
   
@@ -67,8 +65,9 @@ typedef enum {
 @property (assign) CGFloat pageEdge;
 @property (assign) BOOL lockedOtherView;
 @property (assign) GFRenderViewMode renderViewMode;
-@property (nonatomic, retain) NSArray *selections;
 
 - (void)reloadData;
+
+- (void)updateCurrentPage;
 
 @end

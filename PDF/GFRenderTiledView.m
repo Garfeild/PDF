@@ -8,6 +8,7 @@
 
 #import "GFRenderTiledView.h"
 #import "GFPDFTiledLayer.h"
+#import "GFSelectionsDirector.h"
 
 @implementation GFRenderTiledView
 
@@ -124,6 +125,20 @@
     CGContextSetRenderingIntent(context, kCGRenderingIntentDefault);
 		CGContextDrawPDFPage(context, drawPageRef);
 	}
+  
+  /*
+  for (Selection *s in [[GFSelectionsDirector sharedDirector] selectionsForIndex:( mode_ == GFRenderTiledViewModeLeft && rotated_ )? [_dataSource currentPageIndex]+1 : [_dataSource currentPageIndex]] )
+	{
+		CGContextSaveGState(context);
+		
+		CGContextConcatCTM(context, [s transform]);
+		CGContextSetFillColorWithColor(context, [[UIColor yellowColor] CGColor]);
+		CGContextSetBlendMode(context, kCGBlendModeMultiply);
+		CGContextFillRect(context, [s frame]);
+		
+		CGContextRestoreGState(context);
+	}
+   */
   
   CGPDFPageRelease(drawPageRef);
 }

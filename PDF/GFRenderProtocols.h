@@ -34,5 +34,6 @@
 @optional
 - (CGPDFPageRef)pageAtIndex:(NSInteger)index;
 - (CGPDFPageRef)pageWithOffset:(NSInteger)offset;
+- (NSInteger)currentPageIndex;
 
 @end

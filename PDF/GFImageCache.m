@@ -8,6 +8,7 @@
 
 #import <QuartzCore/QuartzCore.h>
 #import "GFImageCache.h"
+#import "GFSelectionsDirector.h"
 
 static GFImageCache *imageCache = nil;
 
@@ -66,9 +67,12 @@ static GFImageCache *imageCache = nil;
 
 - (CGImageRef)itemForIndex:(NSInteger)index dataSource:(id<GFRenderDataSource>)dataSource
 {
+  
+  BOOL haveSelections = ( [[[GFSelectionsDirector sharedDirector] selectionsForIndex:index] count] != 0 ) ? YES : NO;
+  
   NSString *itemKey = [NSString stringWithFormat:@"%@ - %d - %.0fx%.0f", [dataSource fileName], index, pageSize_.width, pageSize_.height];
   NSLog(@"Item key: %@", itemKey);
-  if ( [[_cache allKeys] containsObject:itemKey] )
+  if ( [[_cache allKeys] containsObject:itemKey] && haveSelections == NO )
     return [(UIImage*)[_cache objectForKey:itemKey] CGImage];
   
   CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
@@ -87,9 +91,11 @@ static GFImageCache *imageCache = nil;
 	CGImageRef image = CGBitmapContextCreateImage(context);
 	CGContextRelease(context);
 	
-	[_cache setObject:[UIImage imageWithCGImage:image] forKey:itemKey];
-	CGImageRelease(image);
-  
+  if ( haveSelections == NO )
+  {
+    [_cache setObject:[UIImage imageWithCGImage:image] forKey:itemKey];
+    CGImageRelease(image);
+  }
   return image;
 
 }

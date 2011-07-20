@@ -10,6 +10,8 @@
 #import "GFHelpers.h"
 #import "GFImageCache.h"
 #import "ContentViewController.h"
+#import "Selection.h"
+#import "GFSelectionsDirector.h"
 
 #define ZOOM_AMOUNT 0.25f
 #define NO_ZOOM_SCALE 1.0f
@@ -282,6 +284,7 @@
 
 - (void)renderItemAtIndex:(NSInteger)index inContext:(CGContextRef)context
 {
+  NSLog(@"Rendering");
   CGPDFPageRef page = CGPDFDocumentGetPage(_pdf, index + 1);
 	CGAffineTransform transform = aspectFit(CGPDFPageGetBoxRect(page, kCGPDFMediaBox),
                                           CGContextGetClipBoundingBox(context));
@@ -289,6 +292,19 @@
   CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
   CGContextSetRenderingIntent(context, kCGRenderingIntentDefault);
 	CGContextDrawPDFPage(context, page);
+  
+  for (Selection *s in [[GFSelectionsDirector sharedDirector] selectionsForIndex:index] )
+	{
+    NSLog(@"Selection");
+		CGContextSaveGState(context);
+		
+		CGContextConcatCTM(context, [s transform]);
+		CGContextSetFillColorWithColor(context, [[UIColor yellowColor] CGColor]);
+		CGContextSetBlendMode(context, kCGBlendModeMultiply);
+		CGContextFillRect(context, [s frame]);
+		
+		CGContextRestoreGState(context);
+	}
 }
 
 - (NSString*)fileName
@@ -315,6 +331,11 @@
 - (CGPDFPageRef)pageWithOffset:(NSInteger)offset 
 {
   return [self pageAtIndex:currentIndex_ + offset]; 
+}
+
+- (NSInteger)currentPageIndex
+{
+  return currentIndex_+1;
 }
 
 - (void)switchViews:(BOOL)zoomin
@@ -526,7 +547,6 @@
 - (void)goToPageAtIndex:(NSInteger)index
 {
   NSLog(@"Go to page: %d", index);
-  _renderView.currentItem = index;
   
   if ( [_popOver isPopoverVisible] )
     [_popOver dismissPopoverAnimated:YES];
@@ -535,22 +555,15 @@
   {
     [_searchPopover dismissPopoverAnimated:YES];
     
-    NSIndexSet *indexes = [_searchTableViewController.selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-      return [[(NSDictionary*)obj allKeys] containsObject:[NSNumber numberWithInt:index+1]];
-    }];
-    
-    if ( [indexes count] != 0 )
-    {
-      [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
-    }
   }
+  
+  _renderView.currentItem = index;
+
 }
 
 - (void)searchCompleted
-{
-  NSIndexSet *indexes = [_searchTableViewController.selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-    return [[(NSDictionary*)obj allKeys] containsObject:[NSNumber numberWithInt:currentIndex_+1]];
-  }];
+{  
+  [[GFSelectionsDirector sharedDirector] setSelections:_searchTableViewController.selections];
     
   [UIView animateWithDuration:.35f animations:^(void) {
     _searchPlaceholder.alpha = 0.f;
@@ -558,9 +571,7 @@
       [self addOtherResultsButton];
   } completion:^(BOOL finished) {
     _searchPlaceholder.hidden = YES;
-
-    if ( [indexes count] != 0 )
-      [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
+    [_renderView updateCurrentPage];
   }];
 }
 
