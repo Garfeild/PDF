@@ -8,6 +8,7 @@
 
 #import "GFRenderView.h"
 #import "GFImageCache.h"
+#import "Selection.h"
 
 @interface GFRenderView (Workers)
 
@@ -33,6 +34,7 @@ CGFloat distance(CGPoint a, CGPoint b);
 @synthesize pageEdge        = pageEdge_;
 @synthesize lockedOtherView = lockedOtherView_;
 @synthesize renderViewMode  = renderViewMode_;
+@synthesize selections      = _selections;
 
 #pragma mark -
 #pragma mark Initializations
@@ -205,6 +207,24 @@ CGFloat distance(CGPoint a, CGPoint b);
   }
 }
 
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+
+  for (Selection *s in _selections)
+	{
+		CGContextSaveGState(ctx);
+		
+		CGContextConcatCTM(ctx, [s transform]);
+		CGContextSetFillColorWithColor(ctx, [[UIColor yellowColor] CGColor]);
+		CGContextSetBlendMode(ctx, kCGBlendModeMultiply);
+		CGContextFillRect(ctx, [s frame]);
+		
+		CGContextRestoreGState(ctx);
+	}
+	
+}
+
+
 #pragma mark -
 #pragma mark Setters
 
@@ -269,6 +289,13 @@ CGFloat distance(CGPoint a, CGPoint b);
   [self updateLayersForNewMode];
   [self updateTouchFrames];
   [self setNeedsLayout];
+}
+
+- (void)setSelections:(NSArray *)selections
+{
+	[_selections release];
+	_selections = [selections retain];
+	[self setNeedsDisplay];
 }
 
 

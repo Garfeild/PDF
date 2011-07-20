@@ -20,7 +20,7 @@
 - (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation;
 - (void)clearMemory;
 - (void)showContent;
-- (void)showSearchView;
+- (void)showSearchView:(id)sender;
 @end
 
 
@@ -35,15 +35,46 @@
 
 - (void)showContent
 {
-  _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
-  [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-  
+  if ( ![_popOver isPopoverVisible] )
+  {
+    if ( _popOver == nil )
+      _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
+    [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  }
+  else
+    [_popOver dismissPopoverAnimated:YES];
 }
 
-- (void)showSearchView
+- (void)showSearchView:(id)sender
 {
-  SearchViewController *localVC = [[[SearchViewController alloc] initWithNibName:@"SearchViewController" bundle:nil] autorelease];
-  [self presentModalViewController:localVC animated:YES];
+  if ( ![_searchPopover isPopoverVisible] )
+  {
+    if ( _searchPopover == nil )
+      _searchPopover = [[UIPopoverController alloc] initWithContentViewController:_searchTableViewController];
+    [_searchPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  }
+  else
+    [_searchPopover dismissPopoverAnimated:YES];
+//  SearchViewController *localVC = [[[SearchViewController alloc] initWithNibName:@"SearchViewController" bundle:nil pdfFile:_pdf fileName:_fileName] autorelease];
+////  [self presentModalViewController:localVC animated:YES];
+//  [self.navigationController pushViewController:localVC animated:YES];
+}
+
+- (void)addOtherResultsButton
+{
+  NSMutableArray *items = [[_toolBar items] mutableCopy];
+  
+  UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Other results" style:UIBarButtonItemStyleBordered target:self action:@selector(showSearchView:)];
+  [items insertObject:button atIndex:[items count]-1];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items insertObject:button atIndex:[items count]-1];
+  [button release];
+  
+  _toolBar.items = items;
+  [items release];
 }
 
 - (void)showSelectedPage:(NSInteger)index
@@ -66,23 +97,20 @@
 
 - (void)createToolBar
 {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
   _toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
   _toolBar.barStyle = UIBarStyleDefault;
   _toolBar.center = CGPointMake(self.view.frame.size.width/2, _toolBar.frame.size.height/2);
   _toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
   
+  _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 240, _toolBar.frame.size.height)];
+  _searchBar.delegate = self;
+                
   UIBarButtonItem *button = nil;
   NSMutableArray *items = [[NSMutableArray alloc] init];
   
   button = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStyleBordered target:self action:@selector(prevPage:)];
-  [items addObject:button];
-  [button release];
-
-  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStyleBordered target:self action:@selector(showSearchView)];
   [items addObject:button];
   [button release];
   
@@ -94,6 +122,14 @@
   button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent)];
   [items addObject:button];
   _contentButton = button;
+
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithCustomView:_searchBar];
+  [items addObject:button];
+  [button release];
   
   button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
   button.width = 10.f;
@@ -106,9 +142,39 @@
   
   [_toolBar setItems:items];
   
-  [items release];
-  
   [self.view addSubview:_toolBar];
+  
+  [items release];
+  [pool drain];
+}
+
+- (void)createSearchPlaceholder
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  _searchPlaceholder = [[UIView alloc] initWithFrame:self.view.bounds];
+  _searchPlaceholder.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7f];
+  _searchPlaceholder.alpha = 0.f;
+  _searchPlaceholder.hidden = YES;
+  [self.view addSubview:_searchPlaceholder];
+  
+  UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+  indicator.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2);
+  [indicator startAnimating];
+  [_searchPlaceholder addSubview:indicator];
+  
+  UILabel *label = [[UILabel alloc] init];
+  label.font = [UIFont systemFontOfSize:24];
+  label.textColor = [UIColor whiteColor];
+  label.backgroundColor = [UIColor clearColor];
+  label.text = @"Searching...";
+  [label sizeToFit];
+  label.center = CGPointMake(indicator.center.x, indicator.center.y - 10.f - (indicator.frame.size.height + label.frame.size.height)/2);
+  [_searchPlaceholder addSubview:label];
+  
+  [indicator release];
+  [label release];
+  [pool drain];
 }
 
 - (void)loadView
@@ -116,6 +182,8 @@
   [super loadView];
   
   [self createToolBar];
+  
+  [self createSearchPlaceholder];
   
   _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0,
                                                               _toolBar.frame.size.height, 
@@ -151,6 +219,10 @@
   _leftTiledRenderView.mode = GFRenderTiledViewModeLeft;
   _leftTiledRenderView.rotated = UIInterfaceOrientationIsLandscape(self.interfaceOrientation);
   [_hostView addSubview:_leftTiledRenderView];
+  
+  _searchTableViewController = [[SearchTableViewController alloc] initWithNibName:@"SearchTableViewController" bundle:nil];
+  _searchTableViewController.contentSizeForViewInPopover = CGSizeMake(240, 640);
+  _searchTableViewController.searchViewController = self;
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -427,11 +499,66 @@
   _contentViewController.contentSizeForViewInPopover = size;
 }
 
+- (void)beginSearch:(NSString*)text
+{
+  [NSThread detachNewThreadSelector:@selector(searchForText:) toTarget:_searchTableViewController withObject:text];
+  
+  [self.view bringSubviewToFront:_searchPlaceholder];
+  _searchPlaceholder.hidden = NO;
+  
+  [UIView animateWithDuration:.35f animations:^(void) {
+    _searchPlaceholder.alpha = 1.f;
+  }];
+}
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
+{
+  NSLog(@"Search: %@", searchBar.text);
+  [self beginSearch:searchBar.text];
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+  NSLog(@"Search 2: %@", searchBar.text);
+
+  [self beginSearch:searchBar.text];
+}
+
 - (void)goToPageAtIndex:(NSInteger)index
 {
   _renderView.currentItem = index;
+  
   if ( [_popOver isPopoverVisible] )
     [_popOver dismissPopoverAnimated:YES];
+  
+  if ( [_searchPopover isPopoverVisible] )
+  {
+    [_searchPopover dismissPopoverAnimated:YES];
+    
+    NSIndexSet *indexes = [_searchTableViewController.selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [[(NSDictionary*)obj allKeys] containsObject:[NSNumber numberWithInt:index+1]];
+    }];
+
+    [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
+  
+  }
+}
+
+- (void)searchCompleted
+{
+  NSIndexSet *indexes = [_searchTableViewController.selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+    return [[(NSDictionary*)obj allKeys] containsObject:[NSNumber numberWithInt:currentIndex_+1]];
+  }];
+    
+  [UIView animateWithDuration:.35f animations:^(void) {
+    _searchPlaceholder.alpha = 0.f;
+    if ( [_searchTableViewController.selections count] > 1 )
+      [self addOtherResultsButton];
+  } completion:^(BOOL finished) {
+    _searchPlaceholder.hidden = YES;
+
+    if ( [indexes count] != 0 )
+      [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
+  }];
 }
 
 @end

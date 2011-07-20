@@ -28,6 +28,7 @@
 		4A1B8D3413D714B90019FE30 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3213D714B90019FE30 /* SearchViewController.m */; };
 		4A1B8D3513D714B90019FE30 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3313D714B90019FE30 /* SearchViewController.xib */; };
 		4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */; };
+		4A37F6C513D77D8400939AD9 /* IntelligentSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A37F6C413D77D8300939AD9 /* IntelligentSplitViewController.m */; };
 		4A72237F13CA0A5D00F99C33 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72237E13CA0A5D00F99C33 /* UIKit.framework */; };
 		4A72238113CA0A5D00F99C33 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72238013CA0A5D00F99C33 /* Foundation.framework */; };
 		4A72238313CA0A5D00F99C33 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72238213CA0A5D00F99C33 /* CoreGraphics.framework */; };
@@ -87,6 +88,8 @@
 		4A1B8D3313D714B90019FE30 /* SearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchViewController.xib; sourceTree = "<group>"; };
 		4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentViewController.h; sourceTree = "<group>"; };
 		4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentViewController.m; sourceTree = "<group>"; };
+		4A37F6C313D77D8300939AD9 /* IntelligentSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntelligentSplitViewController.h; path = Libs/IntelligentSplitViewController/IntelligentSplitViewController.h; sourceTree = "<group>"; };
+		4A37F6C413D77D8300939AD9 /* IntelligentSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IntelligentSplitViewController.m; path = Libs/IntelligentSplitViewController/IntelligentSplitViewController.m; sourceTree = "<group>"; };
 		4A72237A13CA0A5D00F99C33 /* PDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A72237E13CA0A5D00F99C33 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		4A72238013CA0A5D00F99C33 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -135,6 +138,7 @@
 		4A0655CF13D75682007CDE7A /* Libs */ = {
 			isa = PBXGroup;
 			children = (
+				4A37F6C113D77D7500939AD9 /* SplitView */,
 				4A0655EB13D75D6D007CDE7A /* PDFKitten */,
 			);
 			name = Libs;
@@ -231,6 +235,15 @@
 				4A7223C113CA375D00F99C33 /* Test.pdf */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		4A37F6C113D77D7500939AD9 /* SplitView */ = {
+			isa = PBXGroup;
+			children = (
+				4A37F6C313D77D8300939AD9 /* IntelligentSplitViewController.h */,
+				4A37F6C413D77D8300939AD9 /* IntelligentSplitViewController.m */,
+			);
+			name = SplitView;
 			sourceTree = "<group>";
 		};
 		4A72236F13CA0A5C00F99C33 = {
@@ -385,6 +398,7 @@
 				4A06561C13D75D6D007CDE7A /* Type0Font.m in Sources */,
 				4A06561D13D75D6D007CDE7A /* Type1Font.m in Sources */,
 				4A06561E13D75D6D007CDE7A /* Type3Font.m in Sources */,
+				4A37F6C513D77D8400939AD9 /* IntelligentSplitViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

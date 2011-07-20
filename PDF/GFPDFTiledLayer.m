@@ -49,14 +49,7 @@
 			screenScale = [mainScreen scale];
 		else
 			screenScale = 1.0f;
-
-		CGRect screenBounds = [mainScreen bounds]; // Is in points
-
-		CGFloat w_pixels = (screenBounds.size.width * screenScale);
-		CGFloat h_pixels = (screenBounds.size.height * screenScale);
-
-		CGFloat max = (w_pixels < h_pixels) ? h_pixels : w_pixels;
-
+    
 		CGFloat sizeOfTiles = 1024.f;
 
 		self.tileSize = CGSizeMake(sizeOfTiles, sizeOfTiles);

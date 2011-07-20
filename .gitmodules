@@ -1,3 +1,6 @@
 [submodule "Libs/PDFKitten"]
 	path = Libs/PDFKitten
 	url = https://github.com/Garfeild/PDFKitten
+[submodule "Libs/IntelligentSplitViewController"]
+	path = Libs/IntelligentSplitViewController
+	url = https://github.com/grgcombs/IntelligentSplitViewController.git

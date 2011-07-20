@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "GFRenderViewController.h"
+#import "IntelligentSplitViewController.h"
 
 @protocol SearchViewControllerDelegate <NSObject>
 
@@ -16,34 +17,22 @@
 
 @end
 
+@protocol SearchTableViewControllerDelegate <NSObject>
 
-@interface SearchTableViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate> {
-  
-  UISearchBar *_searchBar;
-  UITableView *_tableView;
-  
-}
-
-@property (nonatomic, retain) IBOutlet UISearchBar *searchBar;
-@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@required
+- (void)searchCompleted;
 
 @end
 
+@class SearchTableViewController, SearchPDFPageViewController;
 
-@interface SearchPDFPageViewController : UIViewController {
-  
-}
-
-@end
-
-
-@interface SearchViewController : UIViewController <UIPopoverControllerDelegate> {
+@interface SearchViewController : UIViewController <UISplitViewControllerDelegate, UIPopoverControllerDelegate, GFPDFRenderDataSource> {
   
   SearchTableViewController *_tableViewController;
   
   SearchPDFPageViewController *_renderViewController;
   
-  UISplitViewController *_splitViewController;
+  IntelligentSplitViewController *_splitViewController;
   
   UIPopoverController  *_popOver;
   
@@ -51,7 +40,11 @@
   
   UIBarButtonItem *_resultsButton;
   
+  NSString *_fileName;
+  
   id<SearchViewControllerDelegate> _delegate;
+  
+  CGPDFDocumentRef _pdfFile;
   
   NSInteger selectedPage_;
   
@@ -61,8 +54,40 @@
 @property (assign) id<SearchViewControllerDelegate> delegate;
 @property (nonatomic, retain) IBOutlet UIToolbar *toolBar;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil pdfFile:(CGPDFDocumentRef)pdfRef fileName:(NSString*)fileName;
+
 - (IBAction)dismiss:(id)sender;
 
 - (IBAction)showResults:(id)sender;
+
+- (CGPDFDocumentRef)pdfFile;
+
+@end
+
+
+@interface SearchTableViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate> {
+  
+  UISearchBar *_searchBar;
+  
+  UITableView *_tableView;
+  
+  UIViewController<GFPDFRenderDataSource> *_searchViewController;
+  
+  NSArray *_selections;
+}
+
+@property (nonatomic, retain) IBOutlet UISearchBar *searchBar;
+@property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, assign)  UIViewController<GFPDFRenderDataSource> *searchViewController;
+@property (nonatomic, readonly) NSArray *selections;
+
+- (void)searchForText:(NSString*)text;
+
+@end
+
+
+@interface SearchPDFPageViewController : UIViewController {
+  
+}
 
 @end

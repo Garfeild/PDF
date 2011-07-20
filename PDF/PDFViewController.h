@@ -13,7 +13,7 @@
 #import "ContentViewController.h"
 #import "SearchViewController.h"
 
-@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate, ContentViewControllerDelegate, SearchViewControllerDelegate> {
+@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate, ContentViewControllerDelegate, SearchViewControllerDelegate, SearchTableViewControllerDelegate, UISearchBarDelegate> {
   CGPDFDocumentRef _pdf;
   
   NSString *_fileName;
@@ -23,6 +23,8 @@
   UIScrollView *_scrollView;
   
   UIView *_hostView;
+  
+  UIView *_searchPlaceholder;
   
   GFRenderTiledView *_rightTiledRenderView;
   GFRenderTiledView *_leftTiledRenderView;
@@ -40,10 +42,18 @@
   ContentViewController *_contentViewController;
   
   UIPopoverController *_popOver;
+  
+  UIPopoverController *_searchPopover;
+  
+  UISearchBar *_searchBar;
+  
+  SearchTableViewController *_searchTableViewController;
 
 }
 
 - (IBAction)nextPage:(id)sender;
 - (IBAction)prevPage:(id)sender;
+
+- (void)goToPageAtIndex:(NSInteger)index;
 
 @end
