@@ -81,9 +81,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4A0655CF13D75682007CDE7A /* Libs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Libs;
+			sourceTree = "<group>";
+		};
 		4A72236F13CA0A5C00F99C33 = {
 			isa = PBXGroup;
 			children = (
+				4A0655CF13D75682007CDE7A /* Libs */,
 				4A72238413CA0A5D00F99C33 /* PDF */,
 				4A72237D13CA0A5D00F99C33 /* Frameworks */,
 				4A72237B13CA0A5D00F99C33 /* Products */,
