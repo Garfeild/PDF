@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4A0655C013D73C5D007CDE7A /* SearchTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */; };
+		4A1B8D3413D714B90019FE30 /* SearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3213D714B90019FE30 /* SearchViewController.m */; };
+		4A1B8D3513D714B90019FE30 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1B8D3313D714B90019FE30 /* SearchViewController.xib */; };
 		4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */; };
 		4A72237F13CA0A5D00F99C33 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72237E13CA0A5D00F99C33 /* UIKit.framework */; };
 		4A72238113CA0A5D00F99C33 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A72238013CA0A5D00F99C33 /* Foundation.framework */; };
@@ -27,6 +30,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchTableViewController.xib; sourceTree = "<group>"; };
+		4A1B8D3113D714B90019FE30 /* SearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchViewController.h; sourceTree = "<group>"; };
+		4A1B8D3213D714B90019FE30 /* SearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchViewController.m; sourceTree = "<group>"; };
+		4A1B8D3313D714B90019FE30 /* SearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchViewController.xib; sourceTree = "<group>"; };
 		4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentViewController.h; sourceTree = "<group>"; };
 		4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContentViewController.m; sourceTree = "<group>"; };
 		4A72237A13CA0A5D00F99C33 /* PDF.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PDF.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -127,6 +134,10 @@
 				4A7223C113CA375D00F99C33 /* Test.pdf */,
 				4A2BF9AF13D5BCFF00111B21 /* ContentViewController.h */,
 				4A2BF9B013D5BCFF00111B21 /* ContentViewController.m */,
+				4A1B8D3113D714B90019FE30 /* SearchViewController.h */,
+				4A1B8D3213D714B90019FE30 /* SearchViewController.m */,
+				4A1B8D3313D714B90019FE30 /* SearchViewController.xib */,
+				4A0655BE13D73C5C007CDE7A /* SearchTableViewController.xib */,
 			);
 			path = PDF;
 			sourceTree = "<group>";
@@ -192,6 +203,8 @@
 				4A72238913CA0A5D00F99C33 /* InfoPlist.strings in Resources */,
 				4A72239213CA0A5E00F99C33 /* MainWindow.xib in Resources */,
 				4A7223C213CA375D00F99C33 /* Test.pdf in Resources */,
+				4A1B8D3513D714B90019FE30 /* SearchViewController.xib in Resources */,
+				4A0655C013D73C5D007CDE7A /* SearchTableViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +225,7 @@
 				4AF5A89813CCE98C00FD60F3 /* GFPDFTiledLayer.m in Sources */,
 				4AF5A89C13CCE9EA00FD60F3 /* GFRenderTiledView.m in Sources */,
 				4A2BF9B113D5BCFF00111B21 /* ContentViewController.m in Sources */,
+				4A1B8D3413D714B90019FE30 /* SearchViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,6 +20,7 @@
 - (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation;
 - (void)clearMemory;
 - (void)showContent;
+- (void)showSearchView;
 @end
 
 
@@ -37,6 +38,17 @@
   _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
   [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
   
+}
+
+- (void)showSearchView
+{
+  SearchViewController *localVC = [[[SearchViewController alloc] initWithNibName:@"SearchViewController" bundle:nil] autorelease];
+  [self presentModalViewController:localVC animated:YES];
+}
+
+- (void)showSelectedPage:(NSInteger)index
+{
+  _renderView.currentItem = index;
 }
 
 - (void)addPinchRegonizer
@@ -62,7 +74,7 @@
   UIBarButtonItem *button = nil;
   NSMutableArray *items = [[NSMutableArray alloc] init];
   
-  button = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStylePlain target:self action:@selector(prevPage:)];
+  button = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStyleBordered target:self action:@selector(prevPage:)];
   [items addObject:button];
   [button release];
 
@@ -70,7 +82,16 @@
   [items addObject:button];
   [button release];
   
-  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStylePlain target:self action:@selector(showContent)];
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStyleBordered target:self action:@selector(showSearchView)];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent)];
   [items addObject:button];
   _contentButton = button;
   
@@ -79,7 +100,7 @@
   [items addObject:button];
   [button release];
   
-  button = [[UIBarButtonItem alloc] initWithTitle:@">" style:UIBarButtonItemStylePlain target:self action:@selector(nextPage:)];
+  button = [[UIBarButtonItem alloc] initWithTitle:@">" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPage:)];
   [items addObject:button];
   [button release];
   
@@ -157,6 +178,7 @@
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
+    
   NSString *path = [[NSBundle mainBundle] pathForResource:@"Test" ofType:@"pdf"];
   NSURL *fileURL = [NSURL fileURLWithPath:path];
   
