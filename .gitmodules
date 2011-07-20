@@ -1,0 +1,3 @@
+[submodule "Libs/PDFKitten"]
+	path = Libs/PDFKitten
+	url = https://github.com/mokten/PDFKitten.git
