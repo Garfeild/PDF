@@ -13,7 +13,7 @@
 #import "ContentViewController.h"
 #import "SearchViewController.h"
 
-@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate, ContentViewControllerDelegate, SearchViewControllerDelegate, SearchTableViewControllerDelegate, UISearchBarDelegate> {
+@interface PDFViewController : GFRenderViewController <GFPDFRenderDataSource, UIScrollViewDelegate, ContentViewControllerDelegate, SearchTableViewControllerDelegate, UISearchBarDelegate> {
   CGPDFDocumentRef _pdf;
   
   NSString *_fileName;

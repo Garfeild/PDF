@@ -222,7 +222,7 @@
   
   _searchTableViewController = [[SearchTableViewController alloc] initWithNibName:@"SearchTableViewController" bundle:nil];
   _searchTableViewController.contentSizeForViewInPopover = CGSizeMake(240, 640);
-  _searchTableViewController.searchViewController = self;
+  _searchTableViewController.pdfViewController = self;
   
   // Resizing GFRenderView
   _renderView.frame = CGRectMake(0,
@@ -525,6 +525,7 @@
 
 - (void)goToPageAtIndex:(NSInteger)index
 {
+  NSLog(@"Go to page: %d", index);
   _renderView.currentItem = index;
   
   if ( [_popOver isPopoverVisible] )
@@ -537,9 +538,11 @@
     NSIndexSet *indexes = [_searchTableViewController.selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
       return [[(NSDictionary*)obj allKeys] containsObject:[NSNumber numberWithInt:index+1]];
     }];
-
-    [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
-  
+    
+    if ( [indexes count] != 0 )
+    {
+      [_renderView setSelections:[[_searchTableViewController.selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"]];
+    }
   }
 }
 
