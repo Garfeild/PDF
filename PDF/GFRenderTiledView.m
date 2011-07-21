@@ -74,7 +74,6 @@
       NSLog(@"Drawin layer for right page!");
     }
 	}
-  CGContextSaveGState(context);
   CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f); // White
   
 	CGContextFillRect(context, CGContextGetClipBoundingBox(context));
@@ -132,8 +131,6 @@
 		CGContextDrawPDFPage(context, drawPageRef);
 	}
   
-  CGContextRestoreGState(context);
-
   
   NSArray *selections = nil;
   

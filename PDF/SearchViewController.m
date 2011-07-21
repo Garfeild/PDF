@@ -92,9 +92,7 @@
   }
   
   NSDictionary *dict = [_selections objectAtIndex:indexPath.row];
-  
-  NSLog(@"Dict %@", dict);
-  
+    
   cell.textLabel.text = [NSString stringWithFormat:@"Page #%d", [[dict objectForKey:kPageNumber] intValue]];
   cell.detailTextLabel.text = [NSString stringWithFormat:@"Occures %d times", [[dict objectForKey:kSelections] count]];
   
