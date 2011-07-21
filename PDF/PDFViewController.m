@@ -13,7 +13,7 @@
 #import "Selection.h"
 #import "GFSelectionsDirector.h"
 
-#define ZOOM_AMOUNT 0.25f
+#define ZOOM_AMOUNT 0.05f
 #define NO_ZOOM_SCALE 1.0f
 #define MINIMUM_ZOOM_SCALE 1.0f
 #define MAXIMUM_ZOOM_SCALE 5.0f
@@ -336,6 +336,8 @@
 - (NSInteger)currentPageIndex
 {
   return currentIndex_+1;
+  [_leftTiledRenderView reloadData];
+  [_rightTiledRenderView reloadData];
 }
 
 - (void)switchViews:(BOOL)zoomin
@@ -344,6 +346,14 @@
   {
     [self.view bringSubviewToFront:_scrollView];
     [_renderView setHidden:YES];
+    
+    if ( alreadyZoomed_ == NO ) 
+    {
+      alreadyZoomed_ = YES;
+    [_leftTiledRenderView reloadData];
+    [_rightTiledRenderView reloadData];
+    }
+
   }
   else
   {
@@ -363,7 +373,8 @@
       _renderView.lockedOtherView = NO;
     }
     
-    _renderView.currentItem = _renderView.currentItem+1;
+    alreadyZoomed_ = NO;
+    
     [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
 
@@ -409,8 +420,14 @@
 - (void)setCurrentIndex:(NSInteger)currentIndex
 {
   currentIndex_ = currentIndex;
+  alreadyZoomed_ = NO;
 }
 
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+//  [_leftTiledRenderView reloadData];
+//  [_rightTiledRenderView reloadData];
+}
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
 {
@@ -444,17 +461,18 @@
 
 - (void)handlePinch:(UIPinchGestureRecognizer*)recongnizer
 {
-  NSLog(@"PINCH! %f", recongnizer.scale);
+  NSLog(@"PINCH! %f | %f", recongnizer.scale, recongnizer.velocity);
+  CGFloat velocity = ( recongnizer.velocity >= 0 ) ? 1 : -1;  
   CGFloat zoomScale = _scrollView.zoomScale;
   
   if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
   {
-    zoomScale = ((zoomScale += recongnizer.scale/5) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
+    zoomScale = ((zoomScale += velocity*recongnizer.scale/7) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
     
     [_scrollView setZoomScale:zoomScale animated:YES];
   }
 
-
+  if ( zooming_ == NO )
   [self switchViews:YES];
 }
 

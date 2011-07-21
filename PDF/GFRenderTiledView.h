@@ -17,10 +17,11 @@ typedef enum
 
 @interface GFRenderTiledView : UIView {
   
+  CALayer *_imageLayer;
   id <GFPDFRenderDataSource> _dataSource;
   GFRenderTiledViewMode mode_;
   BOOL rotated_;
-    
+  NSInteger currentPage_;
 }
 
 @property (assign) id<GFPDFRenderDataSource> dataSource;

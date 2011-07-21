@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "GFRenderProtocols.h"
+#import "GFPDFTiledLayer.h"
 
 typedef enum {
   GFRenderViewModeSinglePage = 0,
@@ -34,7 +35,7 @@ typedef enum {
 	
 	CALayer *_bottomLayer;
 	CAGradientLayer *_bottomLayerShadow;
-  
+    
   NSInteger currentItem_;
   NSInteger numberOfItems_;
   

@@ -35,6 +35,8 @@
   
   BOOL rotating_;
   
+  BOOL alreadyZoomed_;
+  
   UIPinchGestureRecognizer *_pinch;
   
   UIBarButtonItem *_contentButton;

@@ -9,6 +9,7 @@
 #import "GFRenderTiledView.h"
 #import "GFPDFTiledLayer.h"
 #import "GFSelectionsDirector.h"
+#import "GFImageCache.h"
 
 @implementation GFRenderTiledView
 
@@ -35,6 +36,13 @@
     self.autoresizingMask |= UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
     self.autoresizingMask |= UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
     self.backgroundColor = [UIColor clearColor];
+    
+    //set up the background image layer
+		_imageLayer = [CALayer layer];
+		//set the size and contents with the image		
+		//add the layers
+		[self.layer addSublayer:_imageLayer];
+    
     rotated_ = NO;
     mode_ = GFRenderTiledViewModeLeft;
   }
@@ -66,7 +74,7 @@
       NSLog(@"Drawin layer for right page!");
     }
 	}
-  
+  CGContextSaveGState(context);
   CGContextSetRGBFillColor(context, 1.0f, 1.0f, 1.0f, 1.0f); // White
   
 	CGContextFillRect(context, CGContextGetClipBoundingBox(context));
@@ -121,13 +129,24 @@
 			CGContextConcatCTM(context, CGPDFPageGetDrawingTransform(drawPageRef, kCGPDFCropBox, self.bounds, 0, true));
 		}
     
-    CGContextSetInterpolationQuality(context, kCGInterpolationHigh);
-    CGContextSetRenderingIntent(context, kCGRenderingIntentDefault);
 		CGContextDrawPDFPage(context, drawPageRef);
 	}
   
-  /*
-  for (Selection *s in [[GFSelectionsDirector sharedDirector] selectionsForIndex:( mode_ == GFRenderTiledViewModeLeft && rotated_ )? [_dataSource currentPageIndex]+1 : [_dataSource currentPageIndex]] )
+  CGContextRestoreGState(context);
+
+  
+  NSArray *selections = nil;
+  
+  if ( mode_ == GFRenderTiledViewModeLeft )
+  {
+    selections = [[GFSelectionsDirector sharedDirector] selectionsForIndex:( rotated_ ) ? [_dataSource currentPageIndex]-2 : [_dataSource currentPageIndex]-1];
+  }
+  else
+  {
+    selections = [[GFSelectionsDirector sharedDirector] selectionsForIndex:[_dataSource currentPageIndex]-1];
+  }
+  
+  for (Selection *s in selections )
 	{
 		CGContextSaveGState(context);
 		
@@ -138,14 +157,21 @@
 		
 		CGContextRestoreGState(context);
 	}
-   */
   
+//  CGImageRef image = CGBitmapContextCreateImage(context);
+//  _imageLayer.contents = (id)image;
+//  CGImageRelease(image);
   CGPDFPageRelease(drawPageRef);
 }
 
 - (void)reloadData
 {
-  [self.layer setNeedsDisplay];
+  NSLog(@"Reload data");
+  
+//  _imageLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:( (rotated_) ? [_dataSource currentPageIndex]-1 : [_dataSource currentPageIndex] ) dataSource:(id<GFRenderDataSource>)_dataSource]; 
+  [self.layer setNeedsDisplayOnBoundsChange:YES];
+
+  [self.layer setNeedsDisplayInRect:self.layer.bounds];
 }
 
 @end
