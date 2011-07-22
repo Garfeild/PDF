@@ -648,10 +648,20 @@
 #pragma mark -
 #pragma mark Buttons' actions
 
+- (void)checkOtherPopovers:(UIPopoverController*)popover
+{
+  if ( ![_popOver isEqual:popover] )
+    [_popOver dismissPopoverAnimated:YES];
+  
+  if ( ![_searchPopover isEqual:popover] )
+    [_searchPopover dismissPopoverAnimated:YES];
+}
+
 - (void)showContent
 {
   if ( ![_popOver isPopoverVisible] )
   {
+    [self checkOtherPopovers:_popOver];
     if ( _popOver == nil )
       _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
     [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
@@ -664,6 +674,7 @@
 {
   if ( ![_searchPopover isPopoverVisible] )
   {
+    [self checkOtherPopovers:_searchPopover];
     if ( _searchPopover == nil )
       _searchPopover = [[UIPopoverController alloc] initWithContentViewController:_searchTableViewController];
     [_searchPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
