@@ -38,7 +38,7 @@
 - (void)removeOtherResultsButton;
 
 // Buttons' actions
-- (void)showContent;
+- (void)showContent:(id)sender;
 - (void)showSearchView:(id)sender;
 - (void)cancelSearch;
 - (void)nextPage:(id)sender;
@@ -303,9 +303,9 @@
   [items addObject:button];
   [button release];
   
-  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent)];
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent:)];
   [items addObject:button];
-  _contentButton = button;
+  [button release];
   
   button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
   [items addObject:button];
@@ -657,14 +657,14 @@
     [_searchPopover dismissPopoverAnimated:YES];
 }
 
-- (void)showContent
+- (void)showContent:(id)sender
 {
   if ( ![_popOver isPopoverVisible] )
   {
     [self checkOtherPopovers:_popOver];
     if ( _popOver == nil )
       _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
-    [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    [_popOver presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
   }
   else
     [_popOver dismissPopoverAnimated:YES];

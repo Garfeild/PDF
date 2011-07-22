@@ -47,9 +47,7 @@
 
   
   // Content
-  
-  UIBarButtonItem *_contentButton;
-    
+      
   ContentViewController *_contentViewController;
   
   UIPopoverController *_popOver;
