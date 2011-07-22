@@ -18,166 +18,41 @@
 #define MINIMUM_ZOOM_SCALE 1.0f
 #define MAXIMUM_ZOOM_SCALE 5.0f
 
+#define SEARCH_BAR_WIDTH 240.f
+
 @interface PDFViewController (Workers)
-- (void)updateTiledViewsFrames:(UIInterfaceOrientation)interfaceOrientation;
-- (void)clearMemory;
+
+// UIGestureRecognizers creation methods
+- (void)addPinchRegonizer;
+
+// Search placeholder
+- (void)createSearchPlaceholder;
+- (void)hidePlaceholder;
+
+// Toolbar
+- (void)createToolBar;
+- (void)fillToolBarWithDefault;
+- (void)fillToolBarSearch;
+- (void)fillToolBarAfterSearch;
+- (void)addOtherResultsButton;
+- (void)removeOtherResultsButton;
+
+// Buttons' actions
 - (void)showContent;
 - (void)showSearchView:(id)sender;
+- (void)cancelSearch;
+- (void)nextPage:(id)sender;
+- (void)prevPage:(id)sender;
+
+// Other methods
+- (void)switchViews:(BOOL)zoomin;
+
 @end
 
 
 @implementation PDFViewController
 
 #pragma mark - View lifecycle
-
-- (void)clearMemory
-{
-  [[GFImageCache imageCache] minimizeItems:currentIndex_ dataSource:self];
-}
-
-- (void)showContent
-{
-  if ( ![_popOver isPopoverVisible] )
-  {
-    if ( _popOver == nil )
-      _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
-    [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-  }
-  else
-    [_popOver dismissPopoverAnimated:YES];
-}
-
-- (void)showSearchView:(id)sender
-{
-  if ( ![_searchPopover isPopoverVisible] )
-  {
-    if ( _searchPopover == nil )
-      _searchPopover = [[UIPopoverController alloc] initWithContentViewController:_searchTableViewController];
-    [_searchPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
-  }
-  else
-    [_searchPopover dismissPopoverAnimated:YES];
-//  SearchViewController *localVC = [[[SearchViewController alloc] initWithNibName:@"SearchViewController" bundle:nil pdfFile:_pdf fileName:_fileName] autorelease];
-////  [self presentModalViewController:localVC animated:YES];
-//  [self.navigationController pushViewController:localVC animated:YES];
-}
-
-- (void)addOtherResultsButton
-{
-  NSMutableArray *items = [[_toolBar items] mutableCopy];
-  
-  UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Other results" style:UIBarButtonItemStyleBordered target:self action:@selector(showSearchView:)];
-  [items insertObject:button atIndex:[items count]-1];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-  button.width = 10.f;
-  [items insertObject:button atIndex:[items count]-1];
-  [button release];
-  
-  _toolBar.items = items;
-  [items release];
-}
-
-- (void)showSelectedPage:(NSInteger)index
-{
-  _renderView.currentItem = index;
-}
-
-- (void)addPinchRegonizer
-{
-  _pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-	_pinch.cancelsTouchesInView = NO; 
-  _pinch.delaysTouchesEnded = NO; //tapGesture.delegate = self;
-	[_renderView addGestureRecognizer:_pinch]; 
-}
-
-- (void)addDoubleTapRecognizer
-{
-  
-}
-
-- (void)createToolBar
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  _toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-  _toolBar.barStyle = UIBarStyleDefault;
-  _toolBar.center = CGPointMake(self.view.frame.size.width/2, _toolBar.frame.size.height/2);
-  _toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-  
-  _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 240, _toolBar.frame.size.height)];
-  _searchBar.delegate = self;
-                
-  UIBarButtonItem *button = nil;
-  NSMutableArray *items = [[NSMutableArray alloc] init];
-  
-  button = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStyleBordered target:self action:@selector(prevPage:)];
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-  button.width = 10.f;
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent)];
-  [items addObject:button];
-  _contentButton = button;
-
-  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithCustomView:_searchBar];
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-  button.width = 10.f;
-  [items addObject:button];
-  [button release];
-  
-  button = [[UIBarButtonItem alloc] initWithTitle:@">" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPage:)];
-  [items addObject:button];
-  [button release];
-  
-  [_toolBar setItems:items];
-  
-  [self.view addSubview:_toolBar];
-  
-  [items release];
-  [pool drain];
-}
-
-- (void)createSearchPlaceholder
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-  _searchPlaceholder = [[UIView alloc] initWithFrame:self.view.bounds];
-  _searchPlaceholder.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7f];
-  _searchPlaceholder.alpha = 0.f;
-  _searchPlaceholder.hidden = YES;
-  [self.view addSubview:_searchPlaceholder];
-  
-  UIActivityIndicatorView *indicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-  indicator.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2);
-  [indicator startAnimating];
-  [_searchPlaceholder addSubview:indicator];
-  
-  UILabel *label = [[UILabel alloc] init];
-  label.font = [UIFont systemFontOfSize:24];
-  label.textColor = [UIColor whiteColor];
-  label.backgroundColor = [UIColor clearColor];
-  label.text = @"Searching...";
-  [label sizeToFit];
-  label.center = CGPointMake(indicator.center.x, indicator.center.y - 10.f - (indicator.frame.size.height + label.frame.size.height)/2);
-  [_searchPlaceholder addSubview:label];
-  
-  [indicator release];
-  [label release];
-  [pool drain];
-}
 
 - (void)loadView
 {
@@ -272,10 +147,267 @@
   size.width = 320.f;
   size.height -= 100.f;
   _contentViewController.contentSizeForViewInPopover = size;
+  
+  searching_ = NO;
+  
+  shouldBeginEdit_ = YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+  
+  NSLog(@"Will rotate");
+  if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
+    _rightTiledRenderView.hidden = YES;
+  
+  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];  
+  
+  NSLog(@"Will | _hostView: %fx%f, (%f, %f)", _hostView.frame.size.width, _hostView.frame.size.height, _hostView.frame.origin.x, _hostView.frame.origin.y);
+  
+  [UIView animateWithDuration:duration animations:^(void) {
+    CGRect bounds = self.view.bounds;
+    CGFloat tmp = 0.f;
+    
+    tmp = bounds.size.height;
+    bounds.size.height = bounds.size.width-44.f;
+    bounds.size.width = tmp;
+    
+    if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
+    {
+      _rightTiledRenderView.hidden = YES;
+      _leftTiledRenderView.rotated = NO;
+      
+    }
+    else
+    {
+      _rightTiledRenderView.hidden = NO;
+      _leftTiledRenderView.rotated = YES;
+      bounds.size.width /=2;
+    }
+    
+    _leftTiledRenderView.frame = bounds;
+    bounds.origin.x += bounds.size.width;
+    _rightTiledRenderView.frame = bounds;
+    
+  } completion:^(BOOL finished) {
+    [_leftTiledRenderView reloadData];
+    [_rightTiledRenderView reloadData];
+  }];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+  CGSize size = self.view.bounds.size;
+  size.width = 320.f;
+  size.height -= 100.f;
+  _contentViewController.contentSizeForViewInPopover = size;
 }
 
 
+#pragma mark -
+#pragma mark UIGestureRecognizers creation methods
 
+- (void)addPinchRegonizer
+{
+  _pinch = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
+	_pinch.cancelsTouchesInView = NO; 
+  _pinch.delaysTouchesEnded = NO; //tapGesture.delegate = self;
+	[_renderView addGestureRecognizer:_pinch]; 
+}
+
+
+#pragma mark -
+#pragma mark Search placeholder methods
+
+- (void)createSearchPlaceholder
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  _searchPlaceholder = [[UIView alloc] initWithFrame:self.view.bounds];
+  _searchPlaceholder.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:.7f];
+  _searchPlaceholder.alpha = 0.f;
+  _searchPlaceholder.hidden = YES;
+  _searchPlaceholder.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.view addSubview:_searchPlaceholder];
+  
+  _searchIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+  _searchIndicator.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/2);
+  _searchIndicator.alpha = 0.f;
+  _searchIndicator.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+  [_searchIndicator startAnimating];
+  [_searchPlaceholder addSubview:_searchIndicator];
+  
+  _searchLabel = [[UILabel alloc] init];
+  _searchLabel.font = [UIFont systemFontOfSize:24];
+  _searchLabel.textColor = [UIColor whiteColor];
+  _searchLabel.backgroundColor = [UIColor clearColor];
+  _searchLabel.alpha = 0.f;
+  _searchLabel.text = @"Searching...";
+  _searchLabel.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+  [_searchLabel sizeToFit];
+  _searchLabel.center = CGPointMake(_searchIndicator.center.x, _searchIndicator.center.y - 10.f - (_searchIndicator.frame.size.height + _searchIndicator.frame.size.height)/2);
+  [_searchPlaceholder addSubview:_searchLabel];
+  
+  [pool drain];
+}
+
+- (void)hidePlaceholder
+{
+  [UIView animateWithDuration:.35f animations:^(void) {
+    _searchPlaceholder.alpha = 0.f;
+    [self fillToolBarAfterSearch];
+  } completion:^(BOOL finished) {
+    _searchPlaceholder.hidden = YES;
+    _searchIndicator.alpha = 0.f;
+    _searchLabel.alpha = 0.f;
+    [_renderView updateCurrentPage];
+  }];
+}
+
+
+#pragma mark - 
+#pragma mark Toolbar filling methods
+
+- (void)createToolBar
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  _toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+  _toolBar.barStyle = UIBarStyleDefault;
+  _toolBar.center = CGPointMake(self.view.frame.size.width/2, _toolBar.frame.size.height/2);
+  _toolBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+  
+  _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, SEARCH_BAR_WIDTH, _toolBar.frame.size.height)];
+  _searchBar.delegate = self;
+  
+  [self fillToolBarWithDefault];
+  
+  [self.view addSubview:_toolBar];
+  
+  [pool drain];
+}
+
+- (void)fillToolBarWithDefault
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  UIBarButtonItem *button = nil;
+  NSMutableArray *items = [[NSMutableArray alloc] init];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@"<" style:UIBarButtonItemStyleBordered target:self action:@selector(prevPage:)];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Content" style:UIBarButtonItemStyleBordered target:self action:@selector(showContent)];
+  [items addObject:button];
+  _contentButton = button;
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithCustomView:_searchBar];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@">" style:UIBarButtonItemStyleBordered target:self action:@selector(nextPage:)];
+  [items addObject:button];
+  [button release];
+  
+  [_toolBar setItems:items];
+  
+  [items release];
+  [pool drain];
+}
+
+- (void)fillToolBarSearch
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  UIBarButtonItem *button = nil;
+  NSMutableArray *items = [[NSMutableArray alloc] init];
+  
+  _searchBar.frame = CGRectMake(0, 0, _toolBar.frame.size.width - 100.f, _toolBar.frame.size.height);
+  
+  [_toolBar setItems:nil];
+  
+  button = [[UIBarButtonItem alloc] initWithCustomView:_searchBar];
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items addObject:button];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithTitle:@"Cancel" style:UIBarButtonItemStyleBordered target:self action:@selector(cancelSearch)];
+  [items addObject:button];
+  [button release];
+  
+  [_toolBar setItems:items];
+  
+  [items release];
+  [pool drain];
+}
+
+- (void)fillToolBarAfterSearch
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  [_toolBar setItems:nil];
+
+  _searchBar.frame = CGRectMake(0, 0, SEARCH_BAR_WIDTH, _toolBar.frame.size.height);
+  
+  [self fillToolBarWithDefault];
+  
+  if ( [[[GFSelectionsDirector sharedDirector] selections] count] > 1 )
+    [self addOtherResultsButton];
+  [pool drain];
+}
+
+- (void)addOtherResultsButton
+{
+  NSMutableArray *items = [[_toolBar items] mutableCopy];
+  
+  UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithTitle:@"Other results" style:UIBarButtonItemStyleBordered target:self action:@selector(showSearchView:)];
+  [items insertObject:button atIndex:[items count]-1];
+  [button release];
+  
+  button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+  button.width = 10.f;
+  [items insertObject:button atIndex:[items count]-1];
+  [button release];
+  
+  _toolBar.items = items;
+  [items release];
+}
+
+- (void)removeOtherResultsButton
+{
+  NSMutableArray *items = [[_toolBar items] mutableCopy];
+  
+  for ( int i=0; i<2; i++ )
+    [items removeObjectAtIndex:[items count]-2];  
+  
+  _toolBar.items = items;
+  [items release];
+}
+
+
+#pragma mark -
+#pragma mark GFRenderDataSource's methods
+
+//Optional methods
 
 - (NSInteger)numberOfItems:(GFRenderView *)renderView
 {
@@ -295,7 +427,6 @@
   
   for (Selection *s in [[GFSelectionsDirector sharedDirector] selectionsForIndex:index] )
 	{
-    NSLog(@"Selection");
 		CGContextSaveGState(context);
 		
 		CGContextConcatCTM(context, [s transform]);
@@ -312,20 +443,28 @@
   return _fileName;
 }
 
+
+#pragma mark -
+#pragma mark GFPDFRenderDataSource's methods
+
+// Required methods
+
 - (CGPDFDocumentRef)document
 {
   return _pdf;
 }
 
+- (CGPDFPageRef)page
+{
+  return [self pageAtIndex:currentIndex_]; 
+}
+
+// Optional methods
+
 - (CGPDFPageRef)pageAtIndex:(NSInteger)index
 {
   NSLog(@"Returnin page at index: %d", index);
   return CGPDFDocumentGetPage(_pdf, index + 1); 
-}
-
-- (CGPDFPageRef)page
-{
-  return [self pageAtIndex:currentIndex_]; 
 }
 
 - (CGPDFPageRef)pageWithOffset:(NSInteger)offset 
@@ -340,29 +479,208 @@
   [_rightTiledRenderView reloadData];
 }
 
-- (void)switchViews:(BOOL)zoomin
-{
-  if ( zoomin )
-  {
-    [self.view bringSubviewToFront:_scrollView];
-    [_renderView setHidden:YES];
-    
-    if ( alreadyZoomed_ == NO ) 
-    {
-      alreadyZoomed_ = YES;
-    [_leftTiledRenderView reloadData];
-    [_rightTiledRenderView reloadData];
-    }
 
-  }
-  else
+#pragma mark -
+#pragma mark GFRenderDelegate's methods
+
+- (void)beginZoom
+{    
+  zooming_ = YES;
+  
+  _renderView.lockedOtherView = YES;
+  
+  CGFloat zoomScale = _scrollView.zoomScale;
+  
+  if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
   {
-    [_renderView setHidden:NO];
-    [self.view bringSubviewToFront:_renderView];
+    zoomScale = ((zoomScale += ZOOM_AMOUNT) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
+  }
+  
+  [_scrollView setZoomScale:zoomScale animated:YES];
+  
+  [self switchViews:YES];
+  
+}
+
+- (void)setCurrentIndex:(NSInteger)currentIndex
+{
+  currentIndex_ = currentIndex;
+  alreadyZoomed_ = NO;
+}
+
+
+#pragma mark - 
+#pragma mark ContentViewControllerDelegate's methods
+
+- (void)goToPageAtIndex:(NSInteger)index
+{
+  NSLog(@"Go to page: %d", index);
+  
+  if ( [_popOver isPopoverVisible] )
+    [_popOver dismissPopoverAnimated:YES];
+  
+  if ( [_searchPopover isPopoverVisible] )
+  {
+    [_searchPopover dismissPopoverAnimated:YES];
+    
+  }
+  
+  _renderView.currentItem = index;
+  
+}
+
+
+#pragma mark -
+#pragma mark SearchTableViewControllerDelegate's methods
+
+- (void)searchCompleted
+{  
+  [[GFSelectionsDirector sharedDirector] setSelections:_searchTableViewController.selections];
+  [self hidePlaceholder];
+  searching_ = NO;
+}
+
+
+#pragma mark -
+#pragma mark UISearchBar delegate's methods
+
+- (void)beginSearch:(NSString*)text
+{
+  NSLog(@"Begin search");
+  
+  searching_ = YES;
+  
+  [NSThread detachNewThreadSelector:@selector(searchForText:) toTarget:_searchTableViewController withObject:text];
+  
+  [UIView animateWithDuration:.35f animations:^(void) {
+    _searchIndicator.alpha = 1.f;
+    _searchLabel.alpha = 1.f;
+  }];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+  NSLog(@"Search 1");
+  if ( searchBar.text.length > 0 )
+    [self beginSearch:searchBar.text];
+  
+  [searchBar resignFirstResponder];
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+  NSLog(@"Search 2 | %@", searchBar.text);
+  if ( searching_ == NO )
+  {
+    if ( searchBar.text.length > 0 )
+    {
+      [self beginSearch:searchBar.text];
+    }
+    [searchBar resignFirstResponder];
   }
 }
 
-- (IBAction)nextPage:(id)sender
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+  if ( shouldBeginEdit_ == NO ) 
+  {
+    shouldBeginEdit_ = YES;
+    return NO;
+  }
+  
+  [self.view bringSubviewToFront:_searchPlaceholder];
+  
+  [self.view bringSubviewToFront:_toolBar];
+  
+  _searchPlaceholder.hidden = NO;
+  
+  [UIView animateWithDuration:.35f animations:^(void) {
+    [self fillToolBarSearch];
+    _searchPlaceholder.alpha = 1.f;
+    
+  }];
+  return !searching_;
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+  if ([searchText length] == 0)
+  {
+    if ( _searchPlaceholder.hidden == YES )
+    {
+      [self removeOtherResultsButton];
+      shouldBeginEdit_ = NO;
+    }
+    
+    [[GFSelectionsDirector sharedDirector] setSelections:nil];
+    
+    [_renderView updateCurrentPage];
+
+  }
+}
+
+
+#pragma mark -
+#pragma mark UIScrollView delegate's methods
+
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+  //  [_leftTiledRenderView reloadData];
+  //  [_rightTiledRenderView reloadData];
+}
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+	return _hostView;
+}
+
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
+{
+  if ( scale == 1.f )
+  {
+    zooming_ = NO;
+    [self switchViews:NO];
+    _renderView.lockedOtherView = NO;
+  }
+}
+
+
+#pragma mark -
+#pragma mark Buttons' actions
+
+- (void)showContent
+{
+  if ( ![_popOver isPopoverVisible] )
+  {
+    if ( _popOver == nil )
+      _popOver = [[UIPopoverController alloc] initWithContentViewController:_contentViewController];
+    [_popOver presentPopoverFromBarButtonItem:_contentButton permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  }
+  else
+    [_popOver dismissPopoverAnimated:YES];
+}
+
+- (void)showSearchView:(id)sender
+{
+  if ( ![_searchPopover isPopoverVisible] )
+  {
+    if ( _searchPopover == nil )
+      _searchPopover = [[UIPopoverController alloc] initWithContentViewController:_searchTableViewController];
+    [_searchPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+  }
+  else
+    [_searchPopover dismissPopoverAnimated:YES];
+}
+
+- (void)cancelSearch
+{
+  _searchBar.text = @"";
+  [_searchBar resignFirstResponder];
+  
+  [self hidePlaceholder];
+}
+
+- (void)nextPage:(id)sender
 {
   if ( _scrollView.zoomScale == 1.f )
   {  
@@ -377,11 +695,11 @@
     
     [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
-
+    
   }
 }
 
-- (IBAction)prevPage:(id)sender
+- (void)prevPage:(id)sender
 {
   if ( _scrollView.zoomScale == 1.f )
   {
@@ -391,48 +709,16 @@
       [self switchViews:NO];
       _renderView.lockedOtherView = NO;
     }
-
+    
     _renderView.currentItem = _renderView.currentItem-1;
     [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
   }
 }
 
-- (void)beginZoom
-{    
-  zooming_ = YES;
 
-  _renderView.lockedOtherView = YES;
-    
-  CGFloat zoomScale = _scrollView.zoomScale;
-
-  if (zoomScale < MAXIMUM_ZOOM_SCALE) // Zoom in if below maximum zoom scale
-  {
-    zoomScale = ((zoomScale += ZOOM_AMOUNT) > MAXIMUM_ZOOM_SCALE) ? MAXIMUM_ZOOM_SCALE : zoomScale;
-  }
-
-  [_scrollView setZoomScale:zoomScale animated:YES];
-
-  [self switchViews:YES];
-
-}
-
-- (void)setCurrentIndex:(NSInteger)currentIndex
-{
-  currentIndex_ = currentIndex;
-  alreadyZoomed_ = NO;
-}
-
-- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
-{
-//  [_leftTiledRenderView reloadData];
-//  [_rightTiledRenderView reloadData];
-}
-
-- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
-{
-	return _hostView;
-}
+#pragma mark -
+#pragma mark Gestures recognizers
 
 - (void)handleTouchesOne:(UITapGestureRecognizer *)recognizer
 {
@@ -440,7 +726,7 @@
 	CGRect viewBounds = recognizer.view.bounds;
 	CGPoint tapLocation = [recognizer locationInView:recognizer.view];
   NSInteger numberOfTaps = recognizer.numberOfTapsRequired;
-
+  
   if (numberOfTaps == 2)	// Zoom area handling (double tap)
   {
     tapAreaRect = CGRectInset(viewBounds, 48.f, 48.f);
@@ -471,126 +757,35 @@
     
     [_scrollView setZoomScale:zoomScale animated:YES];
   }
-
+  
   if ( zooming_ == NO )
-  [self switchViews:YES];
+    [self switchViews:YES];
 }
 
-- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale
+
+#pragma mark -
+#pragma mark Other methods
+
+- (void)switchViews:(BOOL)zoomin
 {
-  if ( scale == 1.f )
+  if ( zoomin )
   {
-    zooming_ = NO;
-    [self switchViews:NO];
-    _renderView.lockedOtherView = NO;
-  }
-}
-
-- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-  
-  NSLog(@"Will rotate");
-  if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
-      _rightTiledRenderView.hidden = YES;
-
-  [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];  
-  
-  NSLog(@"Will | _hostView: %fx%f, (%f, %f)", _hostView.frame.size.width, _hostView.frame.size.height, _hostView.frame.origin.x, _hostView.frame.origin.y);
- 
-  [UIView animateWithDuration:duration animations:^(void) {
-    CGRect bounds = self.view.bounds;
-    CGFloat tmp = 0.f;
+    [self.view bringSubviewToFront:_scrollView];
+    [_renderView setHidden:YES];
     
-    tmp = bounds.size.height;
-    bounds.size.height = bounds.size.width-44.f;
-    bounds.size.width = tmp;
-    
-    if ( UIInterfaceOrientationIsPortrait(toInterfaceOrientation) )
+    if ( alreadyZoomed_ == NO ) 
     {
-      _rightTiledRenderView.hidden = YES;
-      _leftTiledRenderView.rotated = NO;
-      
+      alreadyZoomed_ = YES;
+      [_leftTiledRenderView reloadData];
+      [_rightTiledRenderView reloadData];
     }
-    else
-    {
-      _rightTiledRenderView.hidden = NO;
-      _leftTiledRenderView.rotated = YES;
-      bounds.size.width /=2;
-    }
-
-    
-    
-    _leftTiledRenderView.frame = bounds;
-    bounds.origin.x += bounds.size.width;
-    _rightTiledRenderView.frame = bounds;
-    
-  } completion:^(BOOL finished) {
-    [_leftTiledRenderView reloadData];
-    [_rightTiledRenderView reloadData];
-  }];
-}
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-  CGSize size = self.view.bounds.size;
-  size.width = 320.f;
-  size.height -= 100.f;
-  _contentViewController.contentSizeForViewInPopover = size;
-}
-
-- (void)beginSearch:(NSString*)text
-{
-  [NSThread detachNewThreadSelector:@selector(searchForText:) toTarget:_searchTableViewController withObject:text];
-  
-  [self.view bringSubviewToFront:_searchPlaceholder];
-  _searchPlaceholder.hidden = NO;
-  
-  [UIView animateWithDuration:.35f animations:^(void) {
-    _searchPlaceholder.alpha = 1.f;
-  }];
-}
-- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
-{
-  NSLog(@"Search: %@", searchBar.text);
-  [self beginSearch:searchBar.text];
-}
-
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
-{
-  NSLog(@"Search 2: %@", searchBar.text);
-
-  [self beginSearch:searchBar.text];
-}
-
-- (void)goToPageAtIndex:(NSInteger)index
-{
-  NSLog(@"Go to page: %d", index);
-  
-  if ( [_popOver isPopoverVisible] )
-    [_popOver dismissPopoverAnimated:YES];
-  
-  if ( [_searchPopover isPopoverVisible] )
-  {
-    [_searchPopover dismissPopoverAnimated:YES];
     
   }
-  
-  _renderView.currentItem = index;
-
-}
-
-- (void)searchCompleted
-{  
-  [[GFSelectionsDirector sharedDirector] setSelections:_searchTableViewController.selections];
-    
-  [UIView animateWithDuration:.35f animations:^(void) {
-    _searchPlaceholder.alpha = 0.f;
-    if ( [_searchTableViewController.selections count] > 1 )
-      [self addOtherResultsButton];
-  } completion:^(BOOL finished) {
-    _searchPlaceholder.hidden = YES;
-    [_renderView updateCurrentPage];
-  }];
+  else
+  {
+    [_renderView setHidden:NO];
+    [self.view bringSubviewToFront:_renderView];
+  }
 }
 
 @end

@@ -65,19 +65,17 @@ static GFSelectionsDirector *sharedDirector = nil;
   [_selections release];
   _selections = selections;
   [_selections retain];
-  NSLog(@"Settings %d", [_selections count]);
 }
 
 - (NSArray*)selectionsForIndex:(NSInteger)index
 {
   NSIndexSet *indexes = [_selections indexesOfObjectsWithOptions:NSEnumerationConcurrent passingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-    NSLog(@"%@", [(NSDictionary*)obj allKeys] );
     return [[(NSDictionary*)obj objectForKey:@"Page Number"] isEqualToNumber:[NSNumber numberWithInt:index+1]];
   }];
-  NSLog(@"Lets check");
+
   if ( [indexes count] != 0 )
   {
-    NSLog(@"We have selections!");
+
     return [[_selections objectAtIndex:[indexes firstIndex]] objectForKey:@"Selections"];
   }
 

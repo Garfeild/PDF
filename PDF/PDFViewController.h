@@ -18,16 +18,51 @@
   
   NSString *_fileName;
   
+  
+  // Toolbar
+  
   UIToolbar *_toolBar;
+  
+  
+  // Zooming in scroll view
   
   UIScrollView *_scrollView;
   
   UIView *_hostView;
   
+  GFRenderTiledView *_rightTiledRenderView;
+  
+  GFRenderTiledView *_leftTiledRenderView;
+
+  UIPinchGestureRecognizer *_pinch;
+
+  
+  // Search placeholder
+  
   UIView *_searchPlaceholder;
   
-  GFRenderTiledView *_rightTiledRenderView;
-  GFRenderTiledView *_leftTiledRenderView;
+  UIActivityIndicatorView *_searchIndicator;
+  
+  UILabel *_searchLabel;
+
+  
+  // Content
+  
+  UIBarButtonItem *_contentButton;
+    
+  ContentViewController *_contentViewController;
+  
+  UIPopoverController *_popOver;
+  
+  
+  // Search
+  
+  UIPopoverController *_searchPopover;
+  
+  UISearchBar *_searchBar;
+  
+  SearchTableViewController *_searchTableViewController;
+  
   
   NSInteger currentIndex_;
   
@@ -37,24 +72,11 @@
   
   BOOL alreadyZoomed_;
   
-  UIPinchGestureRecognizer *_pinch;
+  BOOL searching_;
   
-  UIBarButtonItem *_contentButton;
-  
-  ContentViewController *_contentViewController;
-  
-  UIPopoverController *_popOver;
-  
-  UIPopoverController *_searchPopover;
-  
-  UISearchBar *_searchBar;
-  
-  SearchTableViewController *_searchTableViewController;
+  BOOL shouldBeginEdit_;
 
 }
-
-- (IBAction)nextPage:(id)sender;
-- (IBAction)prevPage:(id)sender;
 
 - (void)goToPageAtIndex:(NSInteger)index;
 
