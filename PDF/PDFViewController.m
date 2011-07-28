@@ -703,7 +703,7 @@
     }
     
     alreadyZoomed_ = NO;
-    
+    _renderView.currentItem = _renderView.currentItem+1;
     [_leftTiledRenderView reloadData];
     [_rightTiledRenderView reloadData];
     
