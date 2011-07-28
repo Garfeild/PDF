@@ -525,6 +525,8 @@
     
   }
   
+  [self switchViews:NO];
+  _scrollView.zoomScale = 1.f;
   _renderView.currentItem = index;
   
 }
