@@ -537,6 +537,8 @@
 
 - (void)searchCompleted
 {  
+  [_searchThread release];
+  
   [[GFSelectionsDirector sharedDirector] setSelections:_searchTableViewController.selections];
   [self hidePlaceholder];
   searching_ = NO;
@@ -552,7 +554,8 @@
   
   searching_ = YES;
   
-  [NSThread detachNewThreadSelector:@selector(searchForText:) toTarget:_searchTableViewController withObject:text];
+  _searchThread = [[NSThread alloc] initWithTarget:_searchTableViewController selector:@selector(searchForText:) object:text];
+  [_searchThread start];
   
   [UIView animateWithDuration:.35f animations:^(void) {
     _searchIndicator.alpha = 1.f;
@@ -687,6 +690,12 @@
 
 - (void)cancelSearch
 {
+  if ( [_searchThread isExecuting] )
+  {
+    [_searchThread cancel];
+  }
+  [_searchThread release];
+  
   _searchBar.text = @"";
   [_searchBar resignFirstResponder];
   

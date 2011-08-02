@@ -34,9 +34,12 @@
   
   Scanner *scanner = [[Scanner alloc] initWithDocument:[_pdfViewController document]];
 	[scanner setKeyword:text];
-  
-  for ( int i=1; i<=CGPDFDocumentGetNumberOfPages([_pdfViewController document]); i++ )
-  {
+  int i =1;
+
+  while ( i<=CGPDFDocumentGetNumberOfPages([_pdfViewController document]) )
+  {  
+    if ( [[NSThread currentThread] isCancelled] == YES )
+      break;
     [scanner scanPage:i];
     if ( [[scanner selections] count] > 0 )
     {
@@ -50,19 +53,26 @@
       [dict release];
       [selection release];
     }
+    i++;
   }
   
 	[scanner release]; scanner = nil;
+
   
-  _selections = [selections retain];
-  [selections release];
-  
-  [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
-  
-  if ( [_pdfViewController respondsToSelector:@selector(searchCompleted)] )
-    [_pdfViewController performSelectorOnMainThread:@selector(searchCompleted) withObject:nil waitUntilDone:NO];
-  
+  if ( [[NSThread currentThread] isCancelled] == NO )
+  {
+    
+    _selections = [selections retain];
+    [selections release];
+    
+    [_tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+    
+    if ( [_pdfViewController respondsToSelector:@selector(searchCompleted)] )
+      [_pdfViewController performSelectorOnMainThread:@selector(searchCompleted) withObject:nil waitUntilDone:NO];
+  }
   [pool drain];
+  if ( [[NSThread currentThread] isCancelled] == YES )
+    [NSThread exit];
 }
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
