@@ -42,7 +42,7 @@
 		//set the size and contents with the image		
 		//add the layers
 		[self.layer addSublayer:_imageLayer];
-    
+    self.layer.frame = frame;
     rotated_ = NO;
     mode_ = GFRenderTiledViewModeLeft;
   }
@@ -107,9 +107,6 @@
 			CGFloat x_offset = ((boundsWidth - (effectiveWidth * scale)) / 2.0f);
 			CGFloat y_offset = ((boundsHeight - (effectiveHeight * scale)) / 2.0f);
       
-//      if ( mode_ == GFRenderTiledViewModeRight )
-//        x_offset += boundsWidth;
-      
 			y_offset = (boundsHeight - y_offset); // Co-ordinate system adjust
       
 			CGFloat x_translate = (x_offset - (effectiveRect.origin.x * scale));
@@ -155,20 +152,16 @@
 		CGContextRestoreGState(context);
 	}
   
-//  CGImageRef image = CGBitmapContextCreateImage(context);
-//  _imageLayer.contents = (id)image;
-//  CGImageRelease(image);
   CGPDFPageRelease(drawPageRef);
 }
+
 
 - (void)reloadData
 {
   NSLog(@"Reload data");
-  
-//  _imageLayer.contents = (id)[[GFImageCache imageCache] itemForIndex:( (rotated_) ? [_dataSource currentPageIndex]-1 : [_dataSource currentPageIndex] ) dataSource:(id<GFRenderDataSource>)_dataSource]; 
-  [self.layer setNeedsDisplayOnBoundsChange:YES];
+ 
+  [self.layer setNeedsDisplay];
 
-  [self.layer setNeedsDisplayInRect:self.layer.bounds];
 }
 
 @end

@@ -506,6 +506,14 @@
 {
   currentIndex_ = currentIndex;
   alreadyZoomed_ = NO;
+  
+  // Hack around blink of small page when zoom begins.
+  [_leftTiledRenderView.layer setContents:nil];
+  [_rightTiledRenderView.layer setContents:nil];
+  [self.view bringSubviewToFront:_scrollView];
+  [_leftTiledRenderView reloadData];
+  [_rightTiledRenderView reloadData];
+  [self.view performSelector:@selector(bringSubviewToFront:) withObject:_renderView afterDelay:.002f];
 }
 
 
