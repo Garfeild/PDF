@@ -18,6 +18,7 @@
   
   NSString *_fileName;
   
+  NSThread *_searchThread;
   
   // Toolbar
   
