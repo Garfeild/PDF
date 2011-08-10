@@ -219,11 +219,19 @@ CGFloat distance(CGPoint a, CGPoint b);
   NSLog(@"Setting current item %d", currentItem);
   if ( currentItem < 0 || currentItem > numberOfItems_-1 )
     return;
-	currentItem_ = currentItem;
-  
+    
   if ( renderViewMode_ == GFRenderViewModeFacingPages && currentItem % 2 != 0)
-    currentItem_ += 1;
-	
+  {
+    if ( currentItem > currentItem_ )
+    currentItem_ = currentItem + 1;
+    else
+      currentItem_ = currentItem -1;
+  }
+  else
+    currentItem_ = currentItem;
+  
+  NSLog(@"Setting current item #2 %d", currentItem_);
+
   [_delegate setCurrentIndex:currentItem_];
   
 	[CATransaction begin];
